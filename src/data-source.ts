@@ -1,18 +1,17 @@
 import 'dotenv/config';
-import { DataSource } from 'typeorm';
+import { Sequelize } from 'sequelize-typescript';
 import 'reflect-metadata';
 
 const portDb = process.env.PORT_DB as number | undefined;
 const sslOption = process.env.DB_SSL === 'true' ? true : process.env.DB_SSL === 'false' ? false : undefined;
+const databaseUrl = process.env.DATABASE_URL as string;
+const dialect = process.env.DIALECT as string;
 
-export const AppDataSource = new DataSource({
-    type: 'postgres',
-	host: process.env.DB_HOST,
+const AppDataSource = new Sequelize(databaseUrl, {
+	dialect: 'postgres',
 	port: portDb,
 	ssl: sslOption,
-	username: process.env.DB_USER,
-	password: process.env.DB_PASS,
-	database: process.env.DB_NAME,
-	entities: [`${__dirname}/**/entities/*.{ts,js}`],
-	migrations: [`${__dirname}/**/migrations/*.{ts,js}`],
-})
+	models: [__dirname + '/models'],
+});
+
+export { AppDataSource};

@@ -4,6 +4,7 @@ import emailRoutes from './routes/emailRoutes';
 import statusRoutes from './routes/statusRoutes';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger';
+import { AppDataSource } from './data-source';
 
 require('dotenv').config();
 
@@ -22,6 +23,8 @@ function setupRoutes(): void{
 
 // Start the server
 app.listen(port, () => {
+
+    AppDataSource.sync({force: false});
     console.log(`Server is running on port ${port}`);
     return setupRoutes();
 });
