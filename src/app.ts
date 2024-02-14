@@ -4,7 +4,10 @@ import emailRoutes from './routes/emailRoutes';
 import statusRoutes from './routes/statusRoutes';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger';
-import { AppDataSource } from './data-source';
+import { Key, Login, Usuario } from './model/index';
+import SequelizeORM from './repositories/config/sequelize_orm.config';
+import { Sequelize } from "sequelize-typescript";
+
 
 require('dotenv').config();
 
@@ -15,7 +18,11 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
-function setupRoutes(): void{
+const sequelizeORM = new SequelizeORM();
+
+sequelizeORM.connect();
+
+function setupRoutes(): void {
     app.use('/api/documentation', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     app.use('/api/email', emailRoutes);
     app.use('/api/', statusRoutes);
@@ -23,8 +30,6 @@ function setupRoutes(): void{
 
 // Start the server
 app.listen(port, () => {
-
-    AppDataSource.sync({force: false});
     console.log(`Server is running on port ${port}`);
     return setupRoutes();
 });
