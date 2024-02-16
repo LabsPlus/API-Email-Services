@@ -1,43 +1,51 @@
-import { Table, Column, Model, DataType,DefaultScope, AfterCreate, Length, ForeignKey, HasOne, HasMany } from 'sequelize-typescript';
+import { DataTypes, Model, ForeignKey, HasOne, HasMany } from 'sequelize';
 import Login from './login_model';
-import { IUsuario } from '../interfaces/usuario/usuarioInterface';
-import Key from './key_model';
+import database from '../configs/sequelize.config';
 
-@DefaultScope(() => ({
-    attributes: { exclude: ['created_at', 'updated_at'] },
-}))
+class Usuario extends Model {
+    public id!: number;
+    public name!: string;
+    public company_name!: string;
 
-@Table({tableName: 'usuario'})
-class Usuario extends Model{
-    
-    @Column({ type: DataType.INTEGER, field: 'id', primaryKey: true, autoIncrement: true})
-    id!: number;
-
-    @Length({min: 3, max: 45})
-    @Column({type: DataType.STRING, field: 'name', allowNull: false})
-    name!: string;
-
-    @Length({min: 3, max: 45})
-    @Column({type: DataType.STRING, field: 'company_name', allowNull: false})
-    company_name!: string;
-    
-    @ForeignKey(() => Login)
-    @Column({type: DataType.INTEGER, field: 'login_id', allowNull: false})
-    login_id!: number;
-        
-    @HasOne(() => Login, {onDelete: 'CASCADE'})
-    login!: Login;
-
-    @HasMany(() => Key, {onDelete: 'CASCADE'})
-    keys!: Key[];
-    
-    @AfterCreate({})
-    static async excludeFields(usuario: IUsuario){
-        const dataValues = usuario;
-        delete dataValues.created_at;
-        delete dataValues.updated_at;
-    }
-    
 }
+
+Usuario.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                len: [3, 45]
+            }
+        },
+        company_name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+      }
+    },
+    {
+        sequelize: database,
+        tableName: 'usuario',
+        modelName: 'Usuario',
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+        scopes: {
+            defaultScope: {
+                attributes: { exclude: ['created_at', 'updated_at'] }
+            }
+        }
+    }
+);
+
+Usuario.belongsTo(Login, {
+    foreignKey: 'login_id',
+    as: 'login'
+});
 
 export default Usuario;

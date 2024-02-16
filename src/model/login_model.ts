@@ -1,44 +1,44 @@
-import { Table, Column, Model, PrimaryKey, ForeignKey, BelongsTo, AutoIncrement, DataType, AllowNull, CreatedAt, UpdatedAt, AfterCreate, DefaultScope, Is, Unique, Length, HasOne } from 'sequelize-typescript';
-import Usuario from './usuario_model';
-import { ILogin } from '../interfaces/login/loginInterface';
+import Sequelize, {Model} from "sequelize";
+import database from "../configs/sequelize.config";
 
-@DefaultScope(() => ({
-    attributes: { exclude: ['created_at', 'updated_at'] },
-}))
-
-@Table({tableName: 'login'})
-class Login extends Model{
+class Login extends Model {
     
+    public id!: number;
+    public email!: string;
+    public password!: string;
+    public email_recovery!: string;
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
     
-    @Column({ type: DataType.INTEGER, autoIncrement: true, primaryKey: true })
-    id!: number;
-
-    @Length({min: 3, max: 50})
-    @Column({type: DataType.STRING, field: 'email', unique: true, allowNull: false})
-    email!: string;
-
-    @Length({min: 3, max: 50})
-    @Column({type: DataType.STRING, field: 'email_recovery', unique: true, allowNull: false})
-    email_recovery!: string;
-
-    @Length({min: 3, max: 120})
-    @Column({type: DataType.STRING, field: 'password', allowNull: false})
-    password!: string;
-
-    @ForeignKey(() => Usuario)
-    @Column({type: DataType.INTEGER, field: 'usuario_id', allowNull: false})
-    usuario_id!: number;
-
-    @BelongsTo(() => Usuario)
-    usuario!: Usuario;
-    
-    @AfterCreate({})
-    static async excludeFields(login: ILogin){
-        const dataValues = login;
-        delete dataValues.created_at;
-        delete dataValues.updated_at;
-    }
 }
 
+Login.init(
+    {
+        id: {
+            type: Sequelize.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        email: {
+            type: Sequelize.STRING,
+            allowNull: false,
+            unique: true,
+        },
+        email_recovery: {
+            type: Sequelize.STRING,
+            allowNull: false,
+            unique: true,
+        },
+        password: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
+    },
+    {
+        
+        sequelize: database,
+        tableName: "login",
+    }
+);
 
 export default Login;

@@ -1,35 +1,55 @@
-import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType, AllowNull, CreatedAt, UpdatedAt, DefaultScope, AfterCreate, HasMany, Length, ForeignKey, HasOne } from 'sequelize-typescript';
-import { IKey } from '../interfaces/key/keyInterface';
+import { DataTypes, Model} from 'sequelize';
 import Usuario from './usuario_model';
+import database from '../configs/sequelize.config';
 
-@DefaultScope(() => ({
-    attributes: { exclude: ['createdAt', 'updatedAt'] },
-}))
-@Table({tableName: 'key'})
 class Key extends Model{
+    public id!: number;
+    public name!: string;
+    public value!: string;
 
-    @Column({ type: DataType.INTEGER, field: 'id', primaryKey: true, autoIncrement: true})
-    id!: number;
-
-    @Length({min: 3, max: 45})
-    @Column({type: DataType.STRING, field: 'name', allowNull: false})
-    name!: string;
-
-    @Length({min: 3, max: 120})
-    @Column({type: DataType.STRING, field: 'value',unique: true, allowNull: false})
-    value!: string;
-
-    @HasOne(() => Usuario, {onDelete: 'CASCADE'})
-    @ForeignKey(() => Usuario)
-    @Column({type: DataType.INTEGER, field: 'id_usuario', allowNull: false})
-    id_usuario!: number;
-
-    @AfterCreate({})
-    static excludeFields(key: IKey){
-        const dataValues = key;
-        delete dataValues.createdAt;
-        delete dataValues.updatedAt;
-    }
 }
+
+Key.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                len: [3, 45]
+            }
+        },
+        value: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+            validate: {
+                len: [3, 120]
+            }
+        }
+    },
+    {
+        sequelize: database,
+        tableName: 'key',
+        modelName: 'Key',
+        timestamps: true,
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt',
+        scopes: {
+            defaultScope: {
+                attributes: { exclude: ['createdAt', 'updatedAt'] }
+            }
+        }
+    }
+);
+
+Key.belongsTo(Usuario, {
+    foreignKey: 'usuario_id',
+    as: 'usuario'
+});
 
 export default Key;

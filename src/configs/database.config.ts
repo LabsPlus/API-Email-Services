@@ -1,7 +1,7 @@
 import { join } from "path";
-import { SequelizeOptions } from "sequelize-typescript";
+require('dotenv').config();
 
-const databaseConfig: SequelizeOptions = {
+const databaseConfig = {
 
     database: process.env.POSTGRES_DATABASE || 'emailServices',
     username: process.env.POSTGRES_USER || 'root',
@@ -10,10 +10,10 @@ const databaseConfig: SequelizeOptions = {
     dialect: 'postgres',
     logging: false,
     models: [join(__dirname, '../model/*')],
+    port: 5432,
     define: {
         timestamps: true,
         underscored: true,
     },
 }
-
-export default databaseConfig;
+ export default databaseConfig;
