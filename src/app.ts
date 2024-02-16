@@ -3,6 +3,7 @@ import cors from 'cors';
 import loginRoutes from './routes/loginRoutes';
 import emailRoutes from './routes/emailRoutes';
 import statusRoutes from './routes/statusRoutes';
+import usuarioRoutes from './routes/usuarioRoutes';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger';
 import {sequelize} from './data-source';
@@ -22,6 +23,7 @@ function setupRoutes(): void {
     app.use('/api/email', emailRoutes);
     app.use('/api/', statusRoutes);
     app.use('/api/', loginRoutes);
+    app.use('/api/', usuarioRoutes);
 };
 
 sequelize.sync({ force: true }).then(() => {

@@ -6,7 +6,7 @@ class Usuario extends Model {
     public id!: number;
     public name!: string;
     public company_name!: string;
-
+    public login_id!: number;
 }
 
 Usuario.init(
@@ -26,7 +26,25 @@ Usuario.init(
         company_name: {
             type: DataTypes.STRING,
             allowNull: false,
-      }
+      },
+        login_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'login',
+                key: 'id'
+            }
+        },
+        created_at: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: new Date()
+        },
+        updated_at: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: new Date()
+        }
     },
     {
         sequelize: database,
