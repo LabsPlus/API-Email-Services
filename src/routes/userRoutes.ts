@@ -1,12 +1,12 @@
 import express from 'express';
-import UsuarioController from '../controllers/usuarioController';
+import UserController from '../controllers/userController';
 
 const router = express.Router();
-const usuarioController = new UsuarioController();
+const userController = new UserController();
 
 /**
  * @swagger
- * /api/usuario/create:
+ * /api/user/create:
  *   post:
  *     summary: Criar um novo usuário.
  *     description: Cria um novo usuário com o nome, nome da empresa e login fornecidos.
@@ -30,12 +30,12 @@ const usuarioController = new UsuarioController();
  *         description: Erro ao criar usuário.
  */
 router.post('/create', async (req, res) => {
-    await usuarioController.createUsuario(req, res);
+    await userController.createUser(req, res);
 });
 
 /**
  * @swagger
- * /api/usuario/{id}:
+ * /api/user/{id}:
  *   get:
  *     summary: Buscar um usuário.
  *     description: Busca um usuário pelo ID.
@@ -53,12 +53,12 @@ router.post('/create', async (req, res) => {
  *         description: Erro ao buscar usuário.
  */
 router.get('/:id', async (req, res) => {
-    await usuarioController.getUsuarioById(req, res);
+    await userController.getUserById(req, res);
 });
 
 /**
  * @swagger
- * /api/usuario/{id}:
+ * /api/user/{id}:
  *   put:
  *     summary: Atualizar um usuário.
  *     description: Atualiza um usuário pelo ID.
@@ -89,12 +89,12 @@ router.get('/:id', async (req, res) => {
  *         description: Erro ao atualizar usuário.
  */
 router.put('/:id', async (req, res) => {
-    await usuarioController.updateUsuario(req, res);
+    await userController.updateUser(req, res);
 });
 
 /**
  * @swagger
- * /api/usuario/{id}:
+ * /api/user/{id}:
  *   delete:
  *     summary: Excluir um usuário.
  *     description: Exclui um usuário pelo ID.
@@ -112,7 +112,7 @@ router.put('/:id', async (req, res) => {
  *         description: Erro ao excluir usuário.
  */
 router.delete('/:id', async (req, res) => {
-    await usuarioController.deleteUsuario(req, res);
+    await userController.deleteUser(req, res);
 });
 
 export default router;

@@ -3,10 +3,11 @@ import cors from "cors";
 import loginRoutes from "./routes/loginRoutes";
 import emailRoutes from "./routes/emailRoutes";
 import statusRoutes from "./routes/statusRoutes";
-import usuarioRoutes from "./routes/usuarioRoutes";
+import userRoutes from "./routes/userRoutes";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger";
 import { database } from "./data-source";
+import { errorMiddleware } from "./middlewares/error";
 
 require("dotenv").config();
 
@@ -16,13 +17,14 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 app.use(cors());
+app.use(errorMiddleware);  
 
 function setupRoutes(): void {
-  app.use("/api/documentation", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-  app.use("/api/email", emailRoutes);
+  app.use("/api/documentation/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use("/api/email/", emailRoutes);
   app.use("/api/", statusRoutes);
-  app.use("/api", loginRoutes);
-  app.use("/api/usuario", usuarioRoutes);
+  app.use("/api/auth/", loginRoutes);
+  app.use("/api/user/", userRoutes);
 }
 
 database.sync({ force: true }).then(() => {

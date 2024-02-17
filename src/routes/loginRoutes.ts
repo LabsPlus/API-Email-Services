@@ -6,7 +6,7 @@ const loginController = new LoginController();
 
 /**
  * @swagger
- * /api/login/login:
+ * /api/auth/login:
  *   post:
  *     summary: Autenticação do usuário.
  *     description: Autentica o usuário com o email e a senha fornecidos.
@@ -36,7 +36,7 @@ router.post('/login', async (req, res) => {
 
 /**
  * @swagger
- * /api/login/create:
+ * /api/auth/create:
  *   post:
  *     summary: Criar um novo login.
  *     description: Cria um novo login com o email, email de recuperação e senha fornecidos.
@@ -66,7 +66,7 @@ router.post('/create', async (req, res) => {
 
 /**
  * @swagger
- * /api/login/{id}:
+ * /api/auth/{id}:
  *   get:
  *     summary: Obter login por ID.
  *     description: Retorna os detalhes do login com o ID fornecido.
@@ -91,7 +91,7 @@ router.get('/:id', async (req, res) => {
 
 /**
  * @swagger
- * /api/login/email/{email}:
+ * /api/auth/email/{email}:
  *   get:
  *     summary: Obter login por e-mail.
  *     description: Retorna os detalhes do login com o e-mail fornecido.

@@ -1,5 +1,5 @@
 import { DataTypes, Model } from "sequelize";
-import Usuario from "./usuario_model";
+import Usuario from "./user_model";
 import { database } from "../data-source";
 
 class Key extends Model {

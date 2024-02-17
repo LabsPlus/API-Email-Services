@@ -38,4 +38,13 @@ export default class LoginDao {
             throw new Error(`Erro ao buscar login: ${error}`);
         }
     }
+
+    public async checkDatabaseConnection(): Promise<string> {
+        try {
+            await Login.findAll();
+            return 'Serviço de login está funcionando!';
+        } catch (error) {
+            throw new Error(`Erro ao verificar serviço de login: ${error}`);
+        }
+    }
 }

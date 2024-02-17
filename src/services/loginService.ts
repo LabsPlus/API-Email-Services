@@ -4,6 +4,9 @@ import LoginDao from '../repositories/dao/loginDao';
 import { ILogin } from '../interfaces/login/loginInterface';
 
 export default class LoginService {
+    static checkLoginServiceStatus() {
+      throw new Error('Method not implemented.');
+    }
     private loginDao: LoginDao;
 
     constructor() {
@@ -57,4 +60,11 @@ export default class LoginService {
         const validPassword = await bcrypt.compare(password, hash);
         return validPassword;
     }
+
+    public async checkLoginServiceStatus(): Promise<string> {
+            
+            const status = await this.loginDao.checkDatabaseConnection();
+            return status;
+    }
+
 }

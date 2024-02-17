@@ -1,4 +1,4 @@
-export interface IUsuario {
+export interface IUser {
     id: number;
     name: string;
     company_name: string;

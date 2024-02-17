@@ -2,14 +2,14 @@ import { DataTypes, Model, ForeignKey, HasOne, HasMany } from "sequelize";
 import Login from "./login_model";
 import { database } from "../data-source";
 
-class Usuario extends Model {
+class User extends Model {
   public id!: number;
   public name!: string;
   public company_name!: string;
   public login_id!: number;
 }
 
-Usuario.init(
+User.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -48,8 +48,8 @@ Usuario.init(
   },
   {
     sequelize: database,
-    tableName: "usuario",
-    modelName: "Usuario",
+    tableName: "User",
+    modelName: "User",
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
@@ -61,9 +61,9 @@ Usuario.init(
   }
 );
 
-Usuario.belongsTo(Login, {
+User.belongsTo(Login, {
   foreignKey: "login_id",
   as: "login",
 });
 
-export default Usuario;
+export default User;
