@@ -50,13 +50,4 @@ export default class UserDao {
             throw new Error(`Erro ao excluir usuário: ${error}`);
         }
     }
-
-    public static async checkDatabaseConnection(): Promise<string> {
-        try {
-            await User.findAll();
-            return 'Serviço de usuário está funcionando!';
-        } catch (error) {
-            throw new Error(`Erro ao verificar serviço de usuário: ${error}`);
-        }
-    }
 }

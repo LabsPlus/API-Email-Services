@@ -61,10 +61,4 @@ export default class LoginService {
         return validPassword;
     }
 
-    public async checkLoginServiceStatus(): Promise<string> {
-            
-            const status = await this.loginDao.checkDatabaseConnection();
-            return status;
-    }
-
 }

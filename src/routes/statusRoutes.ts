@@ -22,10 +22,9 @@ statusRouter.get('/status', async (req: Request, res: Response) => {
   try {
 
     const emailStatus = await emailService.checkEmailServiceStatus();
-    const userStatus = await UserService.checkUserServiceStatus();
-    const loginStatus = await LoginService.checkLoginServiceStatus();
 
-    res.status(200).json({ status: 'OK', emailService: emailStatus, userService: userStatus, loginService: loginStatus});
+
+    res.status(200).json({ status: 'OK', emailService: emailStatus});
   } catch (error) {
     console.error('Error checking email service status:', error);
     res.status(500).json({ status: 'Error', message: 'Error checking email service status.' });

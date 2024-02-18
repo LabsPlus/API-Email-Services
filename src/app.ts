@@ -27,7 +27,7 @@ function setupRoutes(): void {
   app.use("/api/user/", userRoutes);
 }
 
-database.sync({ force: true }).then(() => {
+database.sync({ force: false }).then(() => {
   console.log(database.models);
 
   console.log("Database and tables created!");

@@ -52,11 +52,4 @@ export default class UserService {
             throw new Error(`Erro ao excluir user: ${error}`);
         }
     }
-
-    public async checkUserServiceStatus(): Promise<string> {
-
-        const status = await UserDao.checkDatabaseConnection();
-        return status;
-
-    }
 }
