@@ -4,6 +4,7 @@ import loginRoutes from "./routes/loginRoutes";
 import emailRoutes from "./routes/emailRoutes";
 import statusRoutes from "./routes/statusRoutes";
 import userRoutes from "./routes/userRoutes";
+import keyRoutes from "./routes/keyRoutes";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger";
 import { database } from "./data-source";
@@ -25,6 +26,7 @@ function setupRoutes(): void {
   app.use("/api/", statusRoutes);
   app.use("/api/auth/", loginRoutes);
   app.use("/api/user/", userRoutes);
+  app.use("/api/key/", keyRoutes);
 }
 
 database.sync({ force: false }).then(() => {
