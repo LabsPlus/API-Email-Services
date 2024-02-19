@@ -1,11 +1,14 @@
 import { DataTypes, Model } from "sequelize";
-import Usuario from "./user_model";
 import { database } from "../data-source";
+import User from "./user_model";
 
 class Key extends Model {
   public id!: number;
   public name!: string;
   public value!: string;
+  public user_id!: number;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
 }
 
 Key.init(
@@ -34,7 +37,7 @@ Key.init(
   {
     sequelize: database,
     tableName: "key",
-    modelName: "Key",
+    modelName: "key",
     timestamps: true,
     createdAt: "createdAt",
     updatedAt: "updatedAt",
@@ -46,9 +49,11 @@ Key.init(
   }
 );
 
-Key.belongsTo(Usuario, {
-  foreignKey: "usuario_id",
-  as: "usuario",
+Key.belongsTo(User, {
+  foreignKey: "user_id",
+  as: "user",
 });
+
+console.log(database.models);
 
 export default Key;

@@ -2,7 +2,7 @@ export interface IKey {
     id: number;
     name: string;
     value: string;
-    id_usuario: number;
+    user_id: number;
     createdAt?: Date;
     updatedAt?: Date;
 }

@@ -6,7 +6,7 @@ const senderEmail = sendEmail;
 
 /**
  * @swagger
- * /api/send:
+ * /api/email/send:
  *   post:
  *     summary: Send an email
  *     requestBody:
