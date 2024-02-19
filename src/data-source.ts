@@ -1,12 +1,12 @@
-import 'dotenv/config';
-import { Sequelize } from 'sequelize-typescript';
-import 'reflect-metadata';
+import "dotenv/config";
+import { Sequelize } from "sequelize-typescript";
+import "reflect-metadata";
 
-const DB_CONFIG = process.env.POSTGRES_URL as string;
+const DB_CONFIG = process.env.DATABASE_URL as string;
 
-const sequelize = new Sequelize(DB_CONFIG,{
-    logging: false,
-    native: false,
+const database = new Sequelize(DB_CONFIG, {
+  logging: false,
+  native: false,
 });
 
-export {sequelize};
+export { database };
