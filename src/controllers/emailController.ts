@@ -1,18 +1,23 @@
 import { Request, Response } from 'express';
-import { EmailService } from '../services/emailService'; // Update the path based on your project structure
+import { EmailService } from '../services/emailService';
 
- const emailController = new EmailService(); 
 
-    export async function sendEmail(req: Request, res: Response) {
+export default class EmailController {
+    private emailService: EmailService;
+
+    constructor() {
+        this.emailService = new EmailService();
+    }
+
+    public async sendEmail(req: Request, res: Response) {
         try {
-            // Assuming you're sending email details in the request body, adjust accordingly
             const { destination, content, subject, attachment} = req.body;
 
             if (!destination || !content || !subject) {
                 return res.status(400).json({ error: 'Missing required parameters' });
             }
 
-            const result = emailController.sendEmail({
+            const result = this.emailService.sendEmail({
                 destination,
                 content,
                 subject,
@@ -25,3 +30,5 @@ import { EmailService } from '../services/emailService'; // Update the path base
             return res.status(500).json({ error: 'Internal Server Error' });
         }
     }
+
+}

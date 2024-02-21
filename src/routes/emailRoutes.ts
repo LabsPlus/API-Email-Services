@@ -1,8 +1,8 @@
-import express, { response } from 'express';
-import { sendEmail } from '../controllers/emailController';
+import express from 'express';
+import EmailController from '../controllers/emailController';
 
 const router = express.Router();
-const senderEmail = sendEmail;
+const senderEmail = new EmailController();
 
 /**
  * @swagger
@@ -45,6 +45,8 @@ const senderEmail = sendEmail;
  *           description: Error sending email
  *     description: Send an email passing the parameters in the request body, destinations, subject, content, attachments
  */
-router.post('/send', senderEmail);
+router.post('/send', async (req, res) => {
+    await senderEmail.sendEmail(req, res);
+});
 
 export default router;
