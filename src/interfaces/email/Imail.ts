@@ -1,7 +1,8 @@
 import { MailInformation } from "./Imail-information";
 
-export interface Mail extends MailInformation{
+export interface Email extends MailInformation{
         
+        apiKey: string;
         from: string;
         to: string;
         subject: string;

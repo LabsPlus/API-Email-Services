@@ -58,4 +58,24 @@ export default class KeyController {
             res.status(400).json({ message: (error as Error).message });
         }
     }
+
+    public async generateUniqueKey(req: Request, res: Response): Promise<void> {
+        try {
+            const length = parseInt(req.params.length);
+            const key = await this.keyService.generateUniqueKey(length);
+            res.status(200).json({ key });
+        } catch (error) {
+            res.status(400).json({ message: (error as Error).message });
+        }
+    }
+
+    public async keyExists(req: Request, res: Response): Promise<void> {
+        try {
+            const key = req.params.key;
+            const exists = await this.keyService.keyExists(key);
+            res.status(200).json({ exists });
+        } catch (error) {
+            res.status(400).json({ message: (error as Error).message });
+        }
+    }
 }

@@ -1,11 +1,13 @@
 import { Key } from "../../model/index";
 import { IKey } from "../../interfaces/key/keyInterface";
+import bycript from 'bcrypt';
 
 export default class KeyDao {
 
     public async createKey(keyData: IKey): Promise<IKey> {
-        
+
         try {
+
             const key = await Key.create({
                 name: keyData.name,
                 value: keyData.value,
@@ -53,19 +55,28 @@ export default class KeyDao {
         }
     }
 
-    public async hasKey(value: string): Promise<boolean> {
+    public async keyExists(key: string): Promise<boolean> {
         try {
-            
-            const key = await Key.findOne({
-                where: {
-                    value
+            const keys = await this.getAllKeys();
+
+            for (const k of keys) {
+                const exists = await bycript.compare(key, k.value);
+                if (exists) {
+                    return true;
                 }
-            });
-
-            return key !== null;
-
+            }
+            return false;
         } catch (error) {
             throw new Error(`Erro ao buscar chave: ${error}`);
+        }
+    }
+
+    private async getAllKeys(): Promise<IKey[]> {
+        try {
+            const keys = await Key.findAll();
+            return keys;
+        } catch (error) {
+            throw new Error(`Erro ao buscar chaves: ${error}`);
         }
     }
 }
