@@ -1,42 +1,24 @@
 require('dotenv').config();
 import * as nodemailer from 'nodemailer';
-import { Email } from "../interfaces/emailInterface";
+import { EmailProps } from "../interfaces/email/Imail";
+import KeyService from '../services/keyService';
 
 class EmailService {
-    constructor() {}
 
-    async sendEmail ({destination, content, subject, attachment}: Email) {
-        try {
-            const transporter = nodemailer.createTransport({
-                host: process.env.SMTP_HOST,
-                port: parseInt(process.env.SMPT_PORT!),
-                secure: false,
-                auth: {
-                    user: process.env.SMTP_USERNAME,
-                    pass: process.env.SMTP_PASSWORD,
-                },
-            });
-            
-            const mailBody: nodemailer.SentMessageInfo = {
-                from: process.env.SMTP_EMAIL_SENDER,
-                to: destination,
-                subject: subject,
-                text: content,
-                content: attachment,
-            };
-            
-            const information = await transporter.sendMail(mailBody);
-            transporter.close();
-            return `E-mail sent with success ${information.response}`;
-        }
-        catch (error) {
-            throw new Error('Email not sended');
-        }
-    }
+  private keyService: KeyService;
 
-    async checkEmailServiceStatus(): Promise<string> {
-        try {
-          const transporter = nodemailer.createTransport({
+  constructor() {
+    this.keyService = new KeyService();
+  }
+
+  public async sendEmail({ from, subject, attachments, to, text, apiKey }: EmailProps) : Promise<string> {
+    try {
+
+      if (! await this.checkApiKey(apiKey)) {
+        throw new Error('Invalid API Key');
+      }
+      else {
+        const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: parseInt(process.env.SMPT_PORT!),
             secure: false,
@@ -44,18 +26,53 @@ class EmailService {
               user: process.env.SMTP_USERNAME,
               pass: process.env.SMTP_PASSWORD,
             },
-          });
-    
-          await transporter.verify();
-    
-          transporter.close();
-          return 'Email service is working properly.';
-        } catch (error) {
-          console.error('Error checking email service status:', error);
-          throw new Error('Email service is down.');
-        }
+        });
+
+        const mailBody: nodemailer.SentMessageInfo = {
+          from: from,
+          to: to,
+          subject: subject,
+          text: text,
+          content: attachments,
+        };
+
+        const information = await transporter.sendMail(mailBody);
+        transporter.close();
+
+        return `E-mail sent with success ${information.response}`;
       }
-    
+      }
+    catch (error) {
+        throw new Error('Email not sended');
+      }
+    }
+
+  public async checkEmailServiceStatus(): Promise<string> {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMPT_PORT!),
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USERNAME,
+          pass: process.env.SMTP_PASSWORD,
+        },
+      });
+
+      await transporter.verify();
+
+      transporter.close();
+      return 'Email service is working properly.';
+    } catch (error) {
+      console.error('Error checking email service status:', error);
+      throw new Error('Email service is down.');
+    }
+  }
+
+  public async checkApiKey(apiKey: string): Promise<boolean> {
+    return await this.keyService.keyExists(apiKey);
+  }
+
 }
 
 export { EmailService };

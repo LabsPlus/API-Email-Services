@@ -1,5 +1,5 @@
-import express from 'express';
-import EmailController from '../controllers/emailController';
+import express from "express";
+import EmailController from "../controllers/emailController";
 
 const router = express.Router();
 const senderEmail = new EmailController();
@@ -9,44 +9,43 @@ const senderEmail = new EmailController();
  * /api/email/send:
  *   post:
  *     summary: Send an email
+ *     description: Send an email
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               destination:
- *                 type: string
- *                 description: Destination email address
- *               subject:
- *                 type: string
- *                 description: Email subject
- *               content:
- *                 type: string
- *                 description: Email content
- *               attachments:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     fileName:
- *                       type: string
- *                       description: File name
- *                     fileContent:
- *                       type: string
- *                       description: File content in base64
+ *            type: object
+ *            properties:
+ *              from:
+ *                type: string
+ *              to:
+ *                type: string
+ *              subject:
+ *                type: string
+ *              text:
+ *                type: string
+ *              attachments:
+ *                type: array
+ *                items:
+ *                  type: object
+ *                  properties:
+ *                    fileName:
+ *                     type: string
+ *                    fileContent:
+ *                     type: string
+ *              apiKey:
+ *                type: string
  *     responses:
- *       200:
- *           description: Email sent successfully
- *       400:
- *           description: Invalid parameters
- *       500:
- *           description: Error sending email
- *     description: Send an email passing the parameters in the request body, destinations, subject, content, attachments
+ *        200:
+ *         description: Email sent with success
+ *        400:
+ *         description: Missing required parameters
+ *        500:
+ *         description: Internal Server Error
  */
-router.post('/send', async (req, res) => {
-    await senderEmail.sendEmail(req, res);
+router.post("/send", async (req, res) => {
+  await senderEmail.sendEmail(req, res);
 });
 
 export default router;
