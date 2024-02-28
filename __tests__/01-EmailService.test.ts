@@ -1,5 +1,7 @@
 
 import { EmailService } from '../src/services/emailService';
+import { Email } from '../src/interfaces/email/Imail';
+import { File } from '../src/interfaces/file/Ifile';
 
 jest.mock('nodemailer', () => ({
   createTransport: jest.fn().mockReturnValue({
@@ -16,20 +18,76 @@ describe('EmailService', () => {
   });
 
   it('should send an email successfully', async () => {
-    const emailProps = {
+
+    const file : File = {
+      fileName: "string",
+      content: "string"
+    };
+
+    const email : Email = {
       from: 'wesley.ulisses@labsif.com.br',
       to: 'carlos.lovey@labsif.com.br',
       subject: 'Test Subject',
-      attachments: [{
-        fileName: "string",
-        fileContent: "string"
-    }],
+      attachments : [file],
       text: 'Test Email',
       apiKey: 'lakkasjdsajdlaksjdldkjsdfdsfdsla',
     };
 
-    const result = await emailService.sendEmail(emailProps);
+    const result = await emailService.sendEmail(email);
 
     expect(result).toBe('E-mail sent with success 250 OK');
   },15000);
+
+  it('should return an error when sending an email with an invalid API Key', async () => {
+    
+    const file : File = {
+      fileName: "string",
+      content: "string"
+    };
+
+    const apiKey = 'invalid';
+
+    const email : Email = {
+      from: 'wesley.ulisses@labsif.com.br',
+      to: 'carlos.lovey@labsif.com.br',
+      subject: 'Test Subject',
+      attachments : [file],
+      text: 'Test Email',
+      apiKey: apiKey,
+    };
+    
+    try {
+      await emailService.sendEmail(email);
+    } catch (error : any) {
+      expect(error.message).toBe('Invalid API Key');
+    }
+  });
+
+
+  it('Should return an error when not sending an email', async () => {
+
+    const file : File = {
+      fileName: "string",
+      content: "string"
+    };
+
+    const email : Email = {
+      from: 'wesley.ulisses@labsif.com.br',
+      to: 'carlos.lovey@labsif.com.br',
+      subject: 'Test Subject',
+      attachments : [file],
+      text: 'Test Email',
+      apiKey: 'lakkasjdsajdlaksjdldkjsdfdsfdsla',
+    };
+
+    jest.spyOn(emailService, 'checkApiKey').mockResolvedValue(true);
+    jest.spyOn(emailService, 'sendEmail').mockRejectedValue(new Error('Email not sended'));
+
+  });
+
+  it('Should return an error when checking email service status', async () => {
+    jest.spyOn(emailService, 'checkEmailServiceStatus').mockRejectedValue(new Error('Email service is down.'));
+  });
+
+
 });

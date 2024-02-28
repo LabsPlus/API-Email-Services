@@ -1,6 +1,6 @@
 require('dotenv').config();
 import * as nodemailer from 'nodemailer';
-import { EmailProps } from "../interfaces/email/Imail";
+import { Email } from "../interfaces/email/Imail";
 import KeyService from '../services/keyService';
 
 class EmailService {
@@ -11,7 +11,7 @@ class EmailService {
     this.keyService = new KeyService();
   }
 
-  public async sendEmail({ from, subject, attachments, to, text, apiKey }: EmailProps) : Promise<string> {
+  public async sendEmail({ from, subject, attachments, to, text, apiKey }: Email) : Promise<string> {
     try {
 
       if (! await this.checkApiKey(apiKey)) {
@@ -42,8 +42,8 @@ class EmailService {
         return `E-mail sent with success ${information.response}`;
       }
       }
-    catch (error) {
-        throw new Error('Email not sended');
+    catch (error : any) {
+        throw new Error(error.message || 'Error sending email.');
       }
     }
 
