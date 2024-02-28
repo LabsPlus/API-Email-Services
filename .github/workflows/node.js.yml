@@ -5,11 +5,31 @@ on:
     branches:
       - dev
       - main
-
+env:
+  # Setting an environment variable with the value of a configuration variable
+  env_var: ${{ vars.ENV_CONTEXT_VAR }}
+  
 jobs:
+  display-variables:
+    name: ${{ vars.JOB_NAME }}
+    # You can use configuration variables with the `vars` context for dynamic jobs
+    if: ${{ vars.USE_VARIABLES == 'true' }}
+    runs-on: ${{ vars.RUNNER }}
+    environment: ${{ vars.ENVIRONMENT_STAGE }}
+    steps:
+    - name: Use variables
+      run: |
+        echo "repository variable : $REPOSITORY_VAR"
+        echo "organization variable : $ORGANIZATION_VAR"
+        echo "overridden variable : $OVERRIDE_VAR"
+        echo "variable from shell environment : $env_var"
+      env:
+        REPOSITORY_VAR: ${{ vars.REPOSITORY_VAR }}
+        ORGANIZATION_VAR: ${{ vars.ORGANIZATION_VAR }}
+        OVERRIDE_VAR: ${{ vars.OVERRIDE_VAR }}
   build-and-test:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -26,7 +46,7 @@ jobs:
           SMTP_EMAIL_SENDER: ${{ secrets.SMTP_EMAIL_SENDER }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ vars.DATABASE_URL }}
         run: |
           echo "SMTP_HOST: $SMTP_HOST"
           echo "SMTP_PORT: $SMTP_PORT"
