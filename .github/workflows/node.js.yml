@@ -34,7 +34,7 @@ jobs:
           echo "SMTP_USERNAME: $SMTP_USERNAME"
           echo "SMTP_PASSWORD: $SMTP_PASSWORD"
           echo "DATABASE_URL: $DATABASE_URL"
-          
+
       - name: Install dependencies
         run: npm install
 
@@ -42,4 +42,6 @@ jobs:
         run: npm run build
 
       - name: Test
-        run: npm run test
+        run: |
+          npm run test
+          echo "Tests completed successfully"
