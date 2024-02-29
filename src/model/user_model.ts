@@ -66,6 +66,4 @@ User.belongsTo(Login, {
   as: "login",
 });
 
-console.log(database.models);
-
 export default User;
