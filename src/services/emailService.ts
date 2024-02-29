@@ -11,7 +11,7 @@ class EmailService {
     this.keyService = new KeyService();
   }
 
-  public async sendEmail({ from, subject, attachments, to, text, apiKey }: Email) : Promise<string> {
+  public async sendEmail({ from, subject, attachments, html, to, text, apiKey }: Email): Promise<string> {
     try {
 
       if (! await this.checkApiKey(apiKey)) {
@@ -19,13 +19,13 @@ class EmailService {
       }
       else {
         const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: parseInt(process.env.SMPT_PORT!),
-            secure: false,
-            auth: {
-              user: process.env.SMTP_USERNAME,
-              pass: process.env.SMTP_PASSWORD,
-            },
+          host: process.env.SMTP_HOST,
+          port: parseInt(process.env.SMPT_PORT!),
+          secure: false,
+          auth: {
+            user: process.env.SMTP_USERNAME,
+            pass: process.env.SMTP_PASSWORD,
+          },
         });
 
         const mailBody: nodemailer.SentMessageInfo = {
@@ -33,6 +33,7 @@ class EmailService {
           to: to,
           subject: subject,
           text: text,
+          html: html,
           content: attachments,
         };
 
@@ -41,11 +42,11 @@ class EmailService {
 
         return `E-mail sent with success ${information.response}`;
       }
-      }
-    catch (error : any) {
-        throw new Error(error.message || 'Error sending email.');
-      }
     }
+    catch (error: any) {
+      throw new Error(error.message || 'Error sending email.');
+    }
+  }
 
   public async checkEmailServiceStatus(): Promise<string> {
     try {
@@ -71,6 +72,37 @@ class EmailService {
 
   public async checkApiKey(apiKey: string): Promise<boolean> {
     return await this.keyService.keyExists(apiKey);
+  }
+
+  public async responseToEmailNotSent(error: string, email: Email): Promise<string> {
+
+    try {
+      const emailBody = `
+                          <p>Caro usuário,</p>
+                          <p>Lamentamos informar que o seu e-mail não pôde ser entregue, devido ao seguinte erro: <strong>${error}</strong>.</p>
+                          <p>Por favor, tente novamente mais tarde ou entre em contato com nossa equipe de suporte se precisar de assistência imediata.</p>
+                          <p>Obrigado pela sua compreensão,</p>
+                          <p>A equipe de suporte</p>
+                        `
+
+      const emailResponse: Email = {
+        from: process.env.SMTP_EMAIL_SENDER as string,
+        to: email.from,
+        subject: `Erro ao enviar o e-mail para o endereço ${email.to}`,
+        text: email.text,
+        html: emailBody,
+        attachments: email.attachments,
+        apiKey: process.env.API_EMAIL_KEY as string,
+      }
+
+      const response = await this.sendEmail(emailResponse);
+
+      return response;
+    }
+    catch (error: any) {
+      throw new Error(error.message);
+    }
+
   }
 
 }

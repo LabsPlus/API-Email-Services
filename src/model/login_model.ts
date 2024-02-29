@@ -38,6 +38,5 @@ Login.init(
     tableName: "login",
   }
 );
-console.log(database.models);
 
 export default Login;

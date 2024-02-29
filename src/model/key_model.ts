@@ -54,6 +54,4 @@ Key.belongsTo(User, {
   as: "user",
 });
 
-console.log(database.models);
-
 export default Key;
