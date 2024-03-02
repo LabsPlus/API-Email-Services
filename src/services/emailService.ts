@@ -44,6 +44,9 @@ class EmailService {
       }
     }
     catch (error: any) {
+      
+      await this.responseToEmailNotSent(error.message, { from, subject, attachments, html, to, text, apiKey });
+
       throw new Error(error.message || 'Error sending email.');
     }
   }
