@@ -32,7 +32,6 @@ export default class EnqueueService {
             while (true) {
                 
                 const email = await this.redisClient.lpop('fila_emails');
-                console.log(email);
                 if (email) {
                     const emailObject = JSON.parse(email) as Email;
                     
@@ -46,9 +45,7 @@ export default class EnqueueService {
                         html: emailObject.html,
                     } as Email;
 
-                    console.log(emailTo+' emailTo');
                     const emailSent = this.emailService.sendEmail(emailTo);
-                    console.log(emailSent);
                     emailsSent.push(await emailSent);
                 } else {
                     break;
