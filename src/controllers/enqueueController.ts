@@ -9,28 +9,29 @@ export class EnqueueController {
         this.enqueueService = new EnqueueService();
     }
 
-    public async enqueueEmail(req: Request, res: Response): Promise<string | any> {
+    public async enqueueEmail(req: Request, res: Response): Promise<void> {
         
         try {
-            
-            const email = req.body;
-            const result = await this.enqueueService.enqueueEmail(email);
 
-            return res.status(200).json({ message: result });
+            const enqueueService = new EnqueueService();
+            const email = req.body;
+            const result = await enqueueService.enqueueEmail(email);
+
+            res.status(200).json({ message: result});
         } catch (error: any) {
-            console.error(error);
-            return res.status(500).json({ error: error.message});
+            res.status(500).json({ error: error.message});
         }
     }
 
-    public async consumeEmailQueue(req: Request, res: Response): Promise<string | any> {
+    public async consumeEmailQueue(req: Request, res: Response): Promise<void> {
         
         try {
+
             const result = await this.enqueueService.consumeEmailQueue();
-            return res.status(200).json({ message: result });
+            res.status(200).json(result);
         } catch (error: any) {
             console.error(error);
-            return res.status(500).json({ error: error.message});
+            res.status(500).json({ error: error.message});
         }
     }
 }

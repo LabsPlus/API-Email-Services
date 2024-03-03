@@ -4,18 +4,21 @@ import { Email } from "../interfaces/email/Imail";
 
 export default class EnqueueService {
 
-    private redisClient = RedisClient;
+    private redisClient: any;
     private emailService: EmailService;
 
     constructor() {
         this.emailService = new EmailService();
+        this.redisClient = RedisClient;
     }
 
-    public async enqueueEmail(email: Email) : Promise<string> {
+    public async enqueueEmail(email: any) : Promise<string> {
+        
         
         const emailString = JSON.stringify(email);
+
         try {
-            await this.redisClient.rpush('fila_emails', emailString);
+            this.redisClient.rpush('fila_emails', emailString);
             return `Email enqueued with success`;
         }catch (error: any) {
             throw new Error(error.message || 'Error enqueueing task.');
@@ -27,11 +30,26 @@ export default class EnqueueService {
         try {
             let emailsSent: string[] = [];
             while (true) {
+                
                 const email = await this.redisClient.lpop('fila_emails');
+                console.log(email);
                 if (email) {
-                    const emailObject = JSON.parse(email);
-                    const emailSent = await this.emailService.sendEmail(emailObject as Email);
-                    emailsSent.push(emailSent);
+                    const emailObject = JSON.parse(email) as Email;
+                    
+                    const emailTo = {
+                        to: emailObject.to,
+                        subject: emailObject.subject,
+                        text: emailObject.text,
+                        apiKey: emailObject.apiKey,
+                        from: emailObject.from,
+                        attachments: emailObject.attachments,
+                        html: emailObject.html,
+                    } as Email;
+
+                    console.log(emailTo+' emailTo');
+                    const emailSent = this.emailService.sendEmail(emailTo);
+                    console.log(emailSent);
+                    emailsSent.push(await emailSent);
                 } else {
                     break;
                 }

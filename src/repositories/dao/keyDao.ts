@@ -57,7 +57,7 @@ export default class KeyDao {
 
     public async keyExists(key: string): Promise<boolean> {
         try {
-            const keys = await this.getAllKeys();
+            const keys = await this.getAllKeys() as IKey[];
 
             for (const k of keys) {
                 const exists = await bycript.compare(key, k.value);
@@ -73,7 +73,7 @@ export default class KeyDao {
 
     private async getAllKeys(): Promise<IKey[]> {
         try {
-            const keys = await Key.findAll();
+            let keys = await Key.findAll() as IKey[];
             return keys;
         } catch (error) {
             throw new Error(`Erro ao buscar chaves: ${error}`);
