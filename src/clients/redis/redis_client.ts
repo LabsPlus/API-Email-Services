@@ -1,10 +1,11 @@
 import Redis from 'ioredis';
 
-const RedisClient = new Redis({
-    host: process.env.REDIS_HOST,
-    port: parseInt(process.env.REDIS_PORT!),
-    password: process.env.REDIS_PASSWORD,
-});
+// URL de conexão fornecida
+const redisURL = process.env.REDIS_URL as string;
 
+// Criando uma instância do Redis
+const RedisClient = new Redis(redisURL, {
+  tls: {}, // Ativando TLS
+});
 
 export default RedisClient;
