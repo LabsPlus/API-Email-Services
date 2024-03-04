@@ -1,7 +1,7 @@
 
-import { EmailService } from '../src/services/emailService';
-import { Email } from '../src/interfaces/email/Imail';
-import { File } from '../src/interfaces/file/Ifile';
+import { EmailService } from '../../src/services/emailService';
+import { Email } from '../../src/interfaces/email/Imail';
+import { File } from '../../src/interfaces/file/Ifile';
 
 jest.mock('nodemailer', () => ({
   createTransport: jest.fn().mockReturnValue({
@@ -35,7 +35,7 @@ describe('EmailService', () => {
 
     const result = await emailService.sendEmail(email);
 
-    expect(result).toBe('E-mail sent with success 250 OK');
+    expect(result).toBe('E-mail sent with success');
   }, 15000);
 
   it('should return an error when sending an email with an invalid API Key', async () => {
@@ -108,7 +108,7 @@ describe('EmailService', () => {
 
     const result = await emailService.responseToEmailNotSent(error, email);
 
-    expect(result).toBe('E-mail sent with success 250 OK');
+    expect(result).toBe('E-mail sent with success');
   });
 
 });
