@@ -1,15 +1,28 @@
 import {Request, Response} from 'express';
 import LoginService from '../services/loginService';
+import EmailValidator from '../helpers/validators/email_validator';
 export default class LoginController {
+    
     private loginService: LoginService;
-
+    private emailValidator: EmailValidator;
+    
     constructor() {
         this.loginService = new LoginService();
+        this.emailValidator = new EmailValidator();
     }
 
     public async createLogin(request: Request, response: Response) {
         try {
+
             const { email, email_recovery, password } = request.body;
+
+            if (!email || !email_recovery || !password) {
+                return response.status(400).json({ error: 'Erro ao criar login, faltam dados' });
+            }
+            if (await this.emailValidator.isEmailValid(email) || await this.emailValidator.isEmailValid(email_recovery)) {
+                return response.status(400).json({ error: 'Erro ao criar login, formato de email inválido' });
+            }
+
             const login = await this.loginService.createLogin({ email, email_recovery, password });
             return response.status(201).json(login);
         }
