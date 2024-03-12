@@ -13,10 +13,13 @@ export default class KeyController {
     public async createKey(req: Request, res: Response) {
         try {
             const keyData: IKey = req.body;
+        if(keyData.user_id === 0){
+            return res.status(401).json({ message: 'userId not found'});
+        } 
             const key = await this.keyService.createKey(keyData);
             return res.status(201).json(key);
-        } catch (error) {
-            return res.status(400).json({ message: (error as Error).message });
+        } catch (error: any) {
+            return res.status(400).json({ message: error });
         }
     }
 

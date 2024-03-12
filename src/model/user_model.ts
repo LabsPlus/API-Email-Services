@@ -34,6 +34,9 @@ User.init(
         model: "login",
         key: "id",
       },
+      validate: {
+        notZero: true,
+      }
     },
     created_at: {
       type: DataTypes.DATE,
