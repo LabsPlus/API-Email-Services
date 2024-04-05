@@ -11,6 +11,7 @@ import { database } from "./data-source";
 import { errorMiddleware } from "./middlewares/error";
 import EnqueueService from "./services/enqueueService";
 import RedisClient from "./clients/redis/redis_client";
+import { corsConfig } from "./middlewares/cors.config";
 
 require("dotenv").config();
 
@@ -23,7 +24,7 @@ const queueJobInterval = parseInt(process.env.QUEUE_JOB_INTERVAL ?? "30000");
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(corsConfig);
 app.use(errorMiddleware);
 
 function setupRoutes(): void {
