@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import loginRoutes from "./routes/loginRoutes";
 import emailRoutes from "./routes/emailRoutes";
 import statusRoutes from "./routes/statusRoutes";
 import userRoutes from "./routes/userRoutes";
@@ -31,10 +30,10 @@ function setupRoutes(): void {
   app.use("/api/documentation/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   app.use("/api/email/", emailRoutes);
   app.use("/api/", statusRoutes);
-  app.use("/api/auth/", loginRoutes);
   app.use("/api/user/", userRoutes);
   app.use("/api/key/", keyRoutes);
   app.use("/api/enqueue/", equeueRoutes);
+  
 }
 
 database.authenticate().then(() => {

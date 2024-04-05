@@ -3,7 +3,17 @@ import UserController from '../controllers/userController';
 
 const router = express.Router();
 const userController = new UserController();
-
+/**
+ * id: number;
+    name: string;
+    cpf_cnpj: string;
+    phone_number: string;
+    email: string;
+    email_recovery: string;
+    password: string;
+    created_at?: Date;
+    updated_at?: Date;
+ */
 /**
  * @swagger
  * /api/user/create:
@@ -18,11 +28,18 @@ const userController = new UserController();
  *             type: object
  *             properties:
  *               name:
- *                 type: string
- *               company_name:
- *                 type: string
- *               login_id:
- *                 type: number
+ *                type: string
+ *               cpf_cnpj:
+ *                type: string
+ *               phone_number:
+ *                type: string
+ *               email:
+ *                type: string
+ *               email_recovery:
+ *                type: string
+ *               password:
+ *                type: string
+ * 
  *     responses:
  *       '201':
  *         description: Usuário criado com sucesso.
@@ -113,6 +130,11 @@ router.put('/:id', async (req, res) => {
  */
 router.delete('/:id', async (req, res) => {
     await userController.deleteUser(req, res);
+});
+
+
+router.post('/login', async (req, res) => {
+    await userController.login(req, res);
 });
 
 export default router;

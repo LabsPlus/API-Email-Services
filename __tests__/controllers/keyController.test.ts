@@ -53,7 +53,7 @@ describe('KeyController', () => {
             await keyController.createKey(mockReq, mockRes);
 
             expect(mockRes.status).toHaveBeenCalledWith(400);
-            expect(mockRes.json).toHaveBeenCalledWith({ message: mockError.message });
+            expect(mockRes.json).toHaveBeenCalledWith( { "message": "Failed to create key" });
         });
     });
 

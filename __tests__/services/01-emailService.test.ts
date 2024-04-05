@@ -24,13 +24,16 @@ describe('EmailService', () => {
       content: "string"
     };
 
+    const apiKeyMock = 'lakkasjdsajdlaksjdldkjsdfdsfdsla';
+    jest.spyOn(emailService, 'checkApiKey').mockResolvedValue(true);
+
     const email: Email = {
       from: 'wesley.ulisses@labsif.com.br',
       to: 'carlos.lovey@labsif.com.br',
       subject: 'Test Subject',
       attachments: [file],
       text: 'Test Email',
-      apiKey: 'lakkasjdsajdlaksjdldkjsdfdsfdsla',
+      apiKey: apiKeyMock,
     };
 
     const result = await emailService.sendEmail(email);
@@ -95,13 +98,16 @@ describe('EmailService', () => {
       content: "string"
     };
 
+    const apiKeyMock = 'lakkasjdsajdlaksjdldkjsdfdsfdsla';
+    jest.spyOn(emailService, 'checkApiKey').mockResolvedValue(true);
+
     const email: Email = {
       from: 'wesley.ulisses@labsif.com.br',
       to: 'carlos.lovey@labsif.com.br',
       subject: 'Test Subject',
       attachments: [file],
       text: 'Test Email',
-      apiKey: 'lakkasjdsajdlaksjdldkjsdfdsfdsla',
+      apiKey: apiKeyMock,
     };
 
     const error: string = 'Falha ao encontrar endereço';

@@ -1,8 +1,11 @@
 export interface IUser {
     id: number;
     name: string;
-    company_name: string;
-    login_id: number;
+    cpf_cnpj: string;
+    phone_number: string;
+    email: string;
+    email_recovery: string;
+    password: string;
     created_at?: Date;
     updated_at?: Date;
 }
