@@ -6,8 +6,11 @@ export default class UserDao {
         try {
             const user = await User.create({
                 name: userData.name,
-                company_name: userData.company_name,
-                login_id: userData.login_id,
+                cpf_cnpj: userData.cpf_cnpj,
+                phone_number: userData.phone_number,
+                email: userData.email,
+                email_recovery: userData.email_recovery,
+                password: userData.password,
             });
 
             return user;
@@ -48,6 +51,15 @@ export default class UserDao {
             await user.destroy();
         } catch (error) {
             throw new Error(`Erro ao excluir usuário: ${error}`);
+        }
+    }
+
+    public async getUserByEmail(email: string): Promise<IUser | null> {
+        try{
+            const login = await User.findOne({where: {email}});
+            return login;
+        }catch(error) {
+            throw new Error(`Erro ao buscar login: ${error}`);
         }
     }
 }

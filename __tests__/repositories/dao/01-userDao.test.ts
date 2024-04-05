@@ -15,8 +15,11 @@ describe('UserDao', () => {
         // Dados do usuário para criação
         const userData: IUser = {
             name: 'John Doe',
-            company_name: 'ABC Company',
-            login_id: 1, // ID de login válido
+            cpf_cnpj: '123456789',
+            phone_number: '123456789',
+            email: 'anc@gmail.com',
+            email_recovery: 'anc@gmail.com',
+            password: '123456',
             id: 0
         };
 
@@ -29,16 +32,23 @@ describe('UserDao', () => {
         // Verificar se o usuário foi criado corretamente
         expect(createdUser).toBeTruthy();
         expect(createdUser.name).toBe(userData.name);
-        expect(createdUser.company_name).toBe(userData.company_name);
-        expect(createdUser.login_id).toBe(userData.login_id);
+        expect(createdUser.cpf_cnpj).toBe(userData.cpf_cnpj);
+        expect(createdUser.phone_number).toBe(userData.phone_number);
+        expect(createdUser.email).toBe(userData.email);
+        expect(createdUser.email_recovery).toBe(userData.email_recovery);
+        expect(createdUser.password).toBe(userData.password);
+
     });
 
     it('should get a user by ID', async () => {
         // Dados do usuário para criação
         const userData: IUser = {
             name: 'John Doe',
-            company_name: 'ABC Company',
-            login_id: 1, // ID de login válido
+            cpf_cnpj: '123456789',
+            phone_number: '123456789',
+            email: 'anc@gmail.com',
+            email_recovery: 'anc@gmail.com',
+            password: '123456',
             id: 0
         };
 
@@ -52,7 +62,11 @@ describe('UserDao', () => {
         expect(fetchedUser).toBeTruthy();
         expect(fetchedUser?.id).toBe(userData.id);
         expect(fetchedUser?.name).toBe(userData.name);
-        expect(fetchedUser?.company_name).toBe(userData.company_name);
-        expect(fetchedUser?.login_id).toBe(userData.login_id);
+        expect(fetchedUser?.cpf_cnpj).toBe(userData.cpf_cnpj);
+        expect(fetchedUser?.phone_number).toBe(userData.phone_number);
+        expect(fetchedUser?.email).toBe(userData.email);
+        expect(fetchedUser?.email_recovery).toBe(userData.email_recovery);
+        expect(fetchedUser?.password).toBe(userData.password);
+    
     });
 });
