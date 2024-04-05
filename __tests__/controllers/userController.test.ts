@@ -23,9 +23,17 @@ describe('UserController', () => {
 
     it('should create a user successfully', async () => {
         // Arrange
-        const mockUserData = { name: 'John Doe', company_name: 'Example Inc.', login_id: 1 };
-        const mockUser = { id: 1, ...mockUserData };
-        userServiceMock.createUser.mockResolvedValueOnce(mockUser);
+        const mockUserData = {
+            name: 'John Doe',
+            cpf_cnpj: '123456789',
+            phone_number: '123456789',
+            email: 'anc@gmail.com',
+            email_recovery: 'anc@gmail.com',
+            password: '123456',
+            id:0
+        };
+        
+        userServiceMock.createUser.mockResolvedValueOnce(mockUserData);
 
         // Act
         mockRequest.body = mockUserData;
@@ -33,7 +41,7 @@ describe('UserController', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(mockUser);
+        expect(mockResponse.json).toHaveBeenCalledWith(mockUserData);
     });
 
     it('should handle errors when creating a user', async () => {
@@ -46,6 +54,6 @@ describe('UserController', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ error: 'Failed to create user' });
+        expect(mockResponse.json).toHaveBeenCalledWith( {"error": "Erro ao criar login, faltam dados"});
     });
 });

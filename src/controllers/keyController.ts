@@ -19,7 +19,7 @@ export default class KeyController {
             const key = await this.keyService.createKey(keyData);
             return res.status(201).json(key);
         } catch (error: any) {
-            return res.status(400).json({ message: error });
+            return res.status(400).json({ message: "Failed to create key" });
         }
     }
 
@@ -32,7 +32,7 @@ export default class KeyController {
             }
             return res.status(200).json(key);
         } catch (error) {
-            return res.status(400).json({ message: (error as Error).message });
+            return res.status(400).json({ message: "Failed to create key" });
         }
     }
 
@@ -46,7 +46,7 @@ export default class KeyController {
             }
             return res.status(200).json(key);
         } catch (error) {
-            return res.status(400).json({ message: (error as Error).message });
+            return res.status(400).json({ message: "Failed to create key"});
         }
     }
 

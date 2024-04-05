@@ -18,8 +18,11 @@ describe('UserService', () => {
     it('should create a user', async () => {
         const userData: IUser = {
             name: 'John Doe',
-            company_name: 'ABC Company',
-            login_id: 1,
+            cpf_cnpj: '123456789',
+            phone_number: '123456789',
+            email: 'anc@gmail.com',
+            email_recovery: 'anc@gmail.com',
+            password: '123456',
             id: 0
         };
         const createdUser: IUser = {
@@ -34,10 +37,13 @@ describe('UserService', () => {
     it('should get a user by ID', async () => {
         const userId = 1;
         const user: IUser = {
-            id: userId,
             name: 'John Doe',
-            company_name: 'ABC Company',
-            login_id: 1,
+            cpf_cnpj: '123456789',
+            phone_number: '123456789',
+            email: 'anc@gmail.com',
+            email_recovery: 'anc@gmail.com',
+            password: '123456',
+            id: 0
         };
         (UserDao.prototype.getuserById as jest.Mock).mockResolvedValueOnce(user);
 
@@ -52,9 +58,12 @@ describe('UserService', () => {
         };
         const updatedUser: IUser = {
             id: userId,
-            name: 'Updated Name',
-            company_name: 'ABC Company',
-            login_id: 1,
+            name: 'John Doe',
+            cpf_cnpj: '123456789',
+            phone_number: '123456789',
+            email: 'anc@gmail.com',
+            email_recovery: 'anc@gmail.com',
+            password: '123456'
         };
         (UserDao.prototype.updateuser as jest.Mock).mockResolvedValueOnce(updatedUser);
 
