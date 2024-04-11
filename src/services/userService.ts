@@ -116,7 +116,7 @@ export default class UserService {
                 to: email,
                 subject: 'Recuperação de senha',
                 html: ForgotPasswordMessage.forgotPasswordMessage(token),
-                apiKey: process.env.EMAIL_API_KEY as string,
+                apiKey: process.env.API_EMAIL_KEY as string,
                 from: process.env.EMAIL_LABS_CLIENT as string,
             } as Email;
 
