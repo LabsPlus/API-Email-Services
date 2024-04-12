@@ -93,4 +93,29 @@ export default class UserController {
             return response.status(400).json({ error: 'Failed to delete user' });
         }
     }
+
+    public async forgotPassword(request: Request, response: Response) {
+        try {
+            const { email } = request.body;
+            const user = await this.userService.getUserByEmail(email);
+
+            if (!email) {
+                return response.status(400).json({ error: 'Email não informado' });
+            }
+
+            if (!(await this.emailValidator.isEmailValid(email))) {
+                return response.status(400).json({ error: 'Email inválido' });
+            }
+
+            if (!await this.userService.checkUserExists(email)) {
+                return response.status(404).json({ error: 'Usuário não encontrado' });
+            }
+
+            const forgetPasswordResponse = await this.userService.forgetPassword(email);
+            return response.status(200).json(forgetPasswordResponse);
+        }
+        catch (error) {
+            return response.status(400).json({ error: 'Failed to send email' });
+        }
+    }
 }

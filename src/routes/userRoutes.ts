@@ -137,4 +137,8 @@ router.post('/login', async (req, res) => {
     await userController.login(req, res);
 });
 
+router.post('/forgot-password', async (req, res) => {
+    await userController.forgotPassword(req, res);
+});
+
 export default router;
