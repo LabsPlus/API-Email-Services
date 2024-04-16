@@ -1,13 +1,14 @@
 import { MailInformation } from "./Imail-information";
+import { File } from "../file/Ifile";
 
-export interface Mail extends MailInformation{
+export interface Email extends MailInformation{
         
+        apiKey: string;
         from: string;
-        to: string;
-        subject: string;
-        text: string;
-        html: string;
-        attachments: any[];
+        to?: string;
+        subject?: string;
+        text?: string;
+        html?: string;
+        attachments?: File[];
         
 };
-

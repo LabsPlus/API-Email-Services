@@ -1,15 +1,15 @@
-import express from "express";
-import EmailController from "../controllers/emailController";
+import express from 'express';
+import { EnqueueController } from '../controllers/enqueueController';
 
 const router = express.Router();
-const senderEmail = new EmailController();
+const enqueueController = new EnqueueController();
 
 /**
  * @swagger
- * /api/email/send:
+ * /api/enqueue/enqueue-email:
  *   post:
- *     summary: Send an email
- *     description: Send an email
+ *     summary: enqueue email
+ *     description: enqueue email
  *     requestBody:
  *       required: true
  *       content:
@@ -38,14 +38,26 @@ const senderEmail = new EmailController();
  *                type: string
  *     responses:
  *        200:
- *         description: Email sent with success
+ *         description: Email enqueued with success
  *        400:
  *         description: Missing required parameters
  *        500:
  *         description: Internal Server Error
  */
-router.post("/send", async (req, res) => {
-  await senderEmail.sendEmail(req, res);
-});
+router.post('/enqueue-email', enqueueController.enqueueEmail);
+
+/**
+ * @swagger
+ * /api/enqueue/consume-email-queue:
+ *   get:
+ *     summary: consume email queue
+ *     description: consume email queue
+ *     responses:
+ *        200:
+ *         description: Email queue consumed with success
+ *        500:
+ *         description: Internal Server Error
+ */
+router.get('/consume-email-queue', enqueueController.consumeEmailQueue);
 
 export default router;
