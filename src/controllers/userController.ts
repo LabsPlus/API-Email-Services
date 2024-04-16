@@ -1,34 +1,23 @@
 import { IUser } from "../interfaces/user/userInterface";
 import UserService from "../services/userService";
 import { Request, Response } from "express";
-import EmailValidator from "../helpers/validators/email_validator";
 
 export default class UserController {
 
     private userService: UserService;
-    private emailValidator: EmailValidator;
 
     constructor() {
         this.userService = new UserService();
-        this.emailValidator = new EmailValidator();
     }
 
     public async createUser(request: Request, response: Response) {
         try {
             const { name, email, email_recovery, password, cpf_cnpj, phone_number } = request.body;
 
-            if (!email || !email_recovery || !password) {
+            if (!email || !email_recovery || !password || !cpf_cnpj || !phone_number || !name) {
                 return response
                     .status(400)
                     .json({ error: "Erro ao criar login, faltam dados" });
-            }
-            if (
-                !(await this.emailValidator.isEmailValid(email)) ||
-                !(await this.emailValidator.isEmailValid(email_recovery))
-            ) {
-                return response
-                    .status(400)
-                    .json({ error: "Erro ao criar login, formato de email inválido" });
             }
 
             const user = await this.userService.createUser({ name, email, email_recovery, password, cpf_cnpj, phone_number } as IUser);
@@ -36,7 +25,7 @@ export default class UserController {
         }
         catch (error) {
             console.log(error);
-            return response.status(400).json({ error: '1Failed to create user' });
+            return response.status(400).json({ error: `${error}` });
         }
     }
 
@@ -101,10 +90,6 @@ export default class UserController {
 
             if (!email) {
                 return response.status(400).json({ error: 'Email não informado' });
-            }
-
-            if (!(await this.emailValidator.isEmailValid(email))) {
-                return response.status(400).json({ error: 'Email inválido' });
             }
 
             if (!await this.userService.checkUserExists(email)) {
