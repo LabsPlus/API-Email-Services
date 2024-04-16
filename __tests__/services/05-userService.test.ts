@@ -18,7 +18,7 @@ describe('UserService', () => {
     it('should create a user', async () => {
         const userData: IUser = {
             name: 'John Doe',
-            cpf_cnpj: '123456789',
+            cpf_cnpj: '74995896171',
             phone_number: '123456789',
             email: 'anc@gmail.com',
             email_recovery: 'anc@gmail.com',
@@ -38,7 +38,7 @@ describe('UserService', () => {
         const userId = 1;
         const user: IUser = {
             name: 'John Doe',
-            cpf_cnpj: '123456789',
+            cpf_cnpj: '74995896171',
             phone_number: '123456789',
             email: 'anc@gmail.com',
             email_recovery: 'anc@gmail.com',
@@ -59,7 +59,7 @@ describe('UserService', () => {
         const updatedUser: IUser = {
             id: userId,
             name: 'John Doe',
-            cpf_cnpj: '123456789',
+            cpf_cnpj: '74995896171',
             phone_number: '123456789',
             email: 'anc@gmail.com',
             email_recovery: 'anc@gmail.com',

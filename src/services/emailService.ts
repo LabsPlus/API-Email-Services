@@ -26,7 +26,7 @@ class EmailService {
       });
 
       const mailBody: nodemailer.SentMessageInfo = {
-        from: email.from,
+        from_email: email.from,
         to: email.to,
         subject: email.subject,
         text: email.text,

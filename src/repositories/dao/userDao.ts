@@ -16,7 +16,7 @@ export default class UserDao {
             return user;
             
         } catch (error) {
-            throw new Error(`Erro ao criar usuário: ${error}`);
+            throw (`${error}`);
         }
     }
 
@@ -25,7 +25,7 @@ export default class UserDao {
             const user = await User.findByPk(id);
             return user;
         } catch (error) {
-            throw new Error(`Erro ao buscar usuário por ID: ${error}`);
+            throw new Error(`${error}`);
         }
     }
 
@@ -38,7 +38,7 @@ export default class UserDao {
             await user.update(userData);
             return user;
         } catch (error) {
-            throw new Error(`Erro ao atualizar usuário: ${error}`);
+            throw new Error(`${error}`);
         }
     }
 
@@ -50,7 +50,7 @@ export default class UserDao {
             }
             await user.destroy();
         } catch (error) {
-            throw new Error(`Erro ao excluir usuário: ${error}`);
+            throw new Error(`${error}`);
         }
     }
 
@@ -59,7 +59,34 @@ export default class UserDao {
             const login = await User.findOne({where: {email}});
             return login;
         }catch(error) {
-            throw new Error(`Erro ao buscar login: ${error}`);
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async getUserByCpfOrCnpj(cpf_cnpj: string): Promise<IUser | null> {
+        try{
+            const user = await User.findOne({where: {cpf_cnpj}});
+            return user;
+        }catch(error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async getUserByEmailRecovery(email_recovery: string): Promise<IUser | null> {
+        try{
+            const user = await User.findOne({where: {email_recovery}});
+            return user;
+        }catch(error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async getUserByPhoneNumber(phone_number: string): Promise<IUser | null> {
+        try{
+            const user = await User.findOne({where: {phone_number}});
+            return user;
+        }catch(error) {
+            throw new Error(`${error}`);
         }
     }
 }
