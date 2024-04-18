@@ -6,6 +6,8 @@ export interface IUser {
     email: string;
     email_recovery: string;
     password: string;
+    reset_password_token: string;
+    reset_password_expires: Date;
     created_at?: Date;
     updated_at?: Date;
 }

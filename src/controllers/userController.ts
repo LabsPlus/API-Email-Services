@@ -1,6 +1,7 @@
+import IForgotPassword from "../interfaces/user/forgotPassword";
 import { IUser } from "../interfaces/user/userInterface";
 import UserService from "../services/userService";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 
 export default class UserController {
 
@@ -24,7 +25,6 @@ export default class UserController {
             return response.status(201).json(user);
         }
         catch (error) {
-            console.log(error);
             return response.status(400).json({ error: `${error}` });
         }
     }
@@ -85,22 +85,62 @@ export default class UserController {
 
     public async forgotPassword(request: Request, response: Response) {
         try {
-            const { email } = request.body;
-            const user = await this.userService.getUserByEmail(email);
+            const email_recovery : string = request.body.email_recovery;
+            const ip = request.headers.host;
 
-            if (!email) {
+            console.log(ip);
+            const userRecovery = {
+                ip: ip,
+                email_recovery: email_recovery,
+            } as IForgotPassword;
+
+            if (!email_recovery) {
                 return response.status(400).json({ error: 'Email não informado' });
             }
 
-            if (!await this.userService.checkUserExists(email)) {
+            const user = await this.userService.getUserByEmailRecovery(email_recovery);
+
+            if (!user) {
+                return response.status(404).json({ error: user});
+            }
+
+            const forgotPassword = await this.userService.forgotPassword(userRecovery);
+
+            if (forgotPassword) {
+                return response.status(200).json({ message: forgotPassword });
+            }
+
+            return response.status(400).json({ error: 'Falha ao enviar email' });
+        }
+        catch (error) {
+            return response.status(400).json( { error: `${error}` });
+        }
+    }
+
+    public async updatePassword(request: Request, response: Response) {
+
+        try {
+            const { email, token, password } = request.body;
+            const user = await this.userService.getUserByEmail(email);
+
+            if (!email || !token || !password) {
+                return response.status(400).json({ error: 'Dados inválidos' });
+            }
+
+            if (!user) {
                 return response.status(404).json({ error: 'Usuário não encontrado' });
             }
 
-            const forgetPasswordResponse = await this.userService.forgetPassword(email);
-            return response.status(200).json(forgetPasswordResponse);
+            const updatedPassword = await this.userService.updatePassword(token, password);
+
+            if (updatedPassword) {
+                return response.status(200).json({ message: 'Senha alterada com sucesso' });
+            }
+
+            return response.status(400).json({ error: 'Falha ao alterar senha' });
         }
         catch (error) {
-            return response.status(400).json({ error: 'Failed to send email' });
+            return response.status(400).json({ error: `${error}` });
         }
     }
 }

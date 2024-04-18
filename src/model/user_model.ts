@@ -11,6 +11,8 @@ class User extends Model implements IUser{
   public password!: string;
   public cpf_cnpj!: string;
   public phone_number!: string;
+  public reset_password_token!: string;
+  public reset_password_expires!: Date;
 }
 
 User.init(
@@ -50,6 +52,14 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+    },
+    reset_password_token: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    reset_password_expires: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
     created_at: {
       type: DataTypes.DATE,
