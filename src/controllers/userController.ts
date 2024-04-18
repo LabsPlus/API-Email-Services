@@ -86,9 +86,8 @@ export default class UserController {
     public async forgotPassword(request: Request, response: Response) {
         try {
             const email_recovery : string = request.body.email_recovery;
-            const ip = request.headers.host;
+            const ip : string = request.body.ip;
 
-            console.log(ip);
             const userRecovery = {
                 ip: ip,
                 email_recovery: email_recovery,
