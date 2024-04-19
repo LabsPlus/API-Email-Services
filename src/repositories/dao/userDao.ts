@@ -89,4 +89,44 @@ export default class UserDao {
             throw new Error(`${error}`);
         }
     }
+
+    public async getUserByResetPasswordToken(reset_password_token: string): Promise<IUser | null> {
+        try{
+            const user = await User.findOne({where: {reset_password_token}});
+            return user;
+        }catch(error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async updateUserPassword(email: string, password: string): Promise<IUser | null> {
+        try{
+            const user = await User.findOne({where: {email}});
+            if (!user) {
+                return null;
+            }
+            await user.update({password, reset_password_token: null, reset_password_expires: null});
+            return user;
+
+        }catch(error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async updateUserResetPasswordToken(email: string, reset_password_token: string, reset_password_expires: Date): Promise<IUser | null> {
+        try{
+            const user = await User.findOne({where: {email}});
+            if (!user) {
+                return null;
+            }
+
+            await user.update({reset_password_token, reset_password_expires});
+            return user;
+
+        }catch(error) {
+            throw new Error(`${error}`);
+        }
+
+    }
+
 }

@@ -141,4 +141,8 @@ router.post('/forgot-password', async (req, res) => {
     await userController.forgotPassword(req, res);
 });
 
+router.post('/update-password', async (req, res) => {
+    await userController.updatePassword(req, res);
+});
+
 export default router;
