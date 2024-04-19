@@ -386,7 +386,9 @@ export default class UserService {
 
             const resetToken = jwt.sign({ email: user.email_recovery }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
 
-            const resetLink = `${process.env.FRONT_END_URL}/new-password?token=${resetToken}`;
+            const resetLink = `${process.env.FRONT_END_URL}/new-password?ResetPasswordToken=${resetToken}`;
+
+            this.userDao.updateUserResetPasswordToken(user.email_recovery, resetToken, new Date(Date.now()+3600000));
 
             const emailData = {
                 from: process.env.EMAIL_LABS_CLIENT as string,
@@ -415,10 +417,11 @@ export default class UserService {
     public async updatePassword(token: string, newPassword: string): Promise<string> {
         try {
 
+            console.log(token);
             if (!token) {
                 throw ('Token não informado');
             }
-
+ 
             if (!newPassword) {
                 throw ('Nova senha não informada');
             }
@@ -427,7 +430,7 @@ export default class UserService {
                 throw ('Token inválido');
             }
 
-            if (PasswordValidator.isValid(newPassword)) {
+            if (!PasswordValidator.isValid(newPassword)) {
                 throw ('Senha inválida, a senha deve conter no mínimo 8 caracteres, uma letra maiúscula, uma letra minúscula e um número');
             }
 
@@ -450,6 +453,8 @@ export default class UserService {
 
             const userUpdated = await this.userDao.updateUserPassword(email, hashedPassword);
 
+            console.log(userUpdated);
+            console.log('Atualizou senha');
             if (!userUpdated) {
                 throw ('Erro ao alterar senha');
             }

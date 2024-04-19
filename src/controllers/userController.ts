@@ -119,15 +119,11 @@ export default class UserController {
     public async updatePassword(request: Request, response: Response) {
 
         try {
-            const { email, token, password } = request.body;
-            const user = await this.userService.getUserByEmail(email);
-
-            if (!email || !token || !password) {
+            const { token, password } = request.body;
+            console.log(token);
+            console.log(password);
+            if (!token || !password) {
                 return response.status(400).json({ error: 'Dados inválidos' });
-            }
-
-            if (!user) {
-                return response.status(404).json({ error: 'Usuário não encontrado' });
             }
 
             const updatedPassword = await this.userService.updatePassword(token, password);
