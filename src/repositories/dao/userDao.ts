@@ -113,9 +113,9 @@ export default class UserDao {
         }
     }
 
-    public async updateUserResetPasswordToken(email: string, reset_password_token: string, reset_password_expires: Date): Promise<IUser | null> {
+    public async updateUserResetPasswordToken(email_recovery: string, reset_password_token: string, reset_password_expires: Date): Promise<IUser | null> {
         try{
-            const user = await User.findOne({where: {email}});
+            const user = await User.findOne({where: {email_recovery}});
             if (!user) {
                 return null;
             }

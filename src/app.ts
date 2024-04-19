@@ -26,7 +26,15 @@ const queueJobInterval = parseInt(process.env.QUEUE_JOB_INTERVAL ?? "30000");
 app.use(express.json());
 app.use(corsConfig);
 app.use(errorMiddleware);
+app.use(cors(
+  {
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  }
 
+));
 function setupRoutes(): void {
   app.use("/api/documentation/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   app.use("/api/email/", emailRoutes);
