@@ -1,17 +1,18 @@
 export default class CpfCnpjValidator {
 
     public async isCpfCnpjValid(cpf_cnpj: string): Promise<boolean> {
-        
-        if (cpf_cnpj.length < 11 || cpf_cnpj.length > 14) {
+        const numeroIdentificador = cpf_cnpj.replace(/[^\d]/g, '');
+
+        if (numeroIdentificador.length < 11 || numeroIdentificador.length > 14) {
             return false;
         }
 
-        if (cpf_cnpj.length === 11) {
-            return this.isCpfValid(cpf_cnpj);
+        if (numeroIdentificador.length === 11) {
+            return this.isCpfValid(numeroIdentificador);
         } 
 
-        if (cpf_cnpj.length === 14) {
-            return this.isCnpjValid(cpf_cnpj);
+        if (numeroIdentificador.length === 14) {
+            return this.isCnpjValid(numeroIdentificador);
         }
 
         return false;
