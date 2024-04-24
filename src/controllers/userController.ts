@@ -100,7 +100,7 @@ export default class UserController {
             const user = await this.userService.getUserByEmailRecovery(email_recovery);
 
             if (!user) {
-                return response.status(404).json({ error: user});
+                return response.status(404).json({ error: 'O sistema não encontra o email no banco de dados.'});
             }
 
             const forgotPassword = await this.userService.forgotPassword(userRecovery);
