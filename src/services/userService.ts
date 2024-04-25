@@ -89,7 +89,7 @@ export default class UserService {
         }
     }
 
-    public async getUserByEmailRecovery(email_recovery: string): Promise<IUser | null> {
+    public async getUserByEmailRecovery(email_recovery: string): Promise<IUser | string> {
         try {
             const user = await this.userDao.getUserByEmailRecovery(email_recovery);
             return user;
