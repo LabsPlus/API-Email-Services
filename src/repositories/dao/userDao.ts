@@ -75,7 +75,7 @@ export default class UserDao {
     public async getUserByEmailRecovery(email_recovery: string): Promise<IUser | string> {
         try{
             const user = await User.findOne({where: {email_recovery}});
-            return user ? user : 'O sistema não encontra o email no banco de dados.';
+            return user ? user : "Email não encontrado na base de dados";
         }catch(error) {
             throw new Error(`${error}`);
         }
