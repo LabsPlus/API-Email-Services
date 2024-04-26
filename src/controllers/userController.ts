@@ -98,8 +98,8 @@ export default class UserController {
             }
 
             const user = await this.userService.getUserByEmailRecovery(email_recovery);
-
-            if (!user) {
+         
+            if (typeof(user) === "string") {
                 return response.status(404).json({ error: user});
             }
 
