@@ -135,7 +135,7 @@ export default class UserController {
             return response.status(401).json({ error: 'Falha ao alterar senha' });
         }
         catch (error) {
-            return response.status(401).json({ error: `${error}` });
+            return response.status(500).json({ error: "Internal Server Error" });
         }
     }
 }

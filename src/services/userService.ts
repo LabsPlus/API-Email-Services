@@ -89,7 +89,7 @@ export default class UserService {
         }
     }
 
-    public async getUserByEmailRecovery(email_recovery: string): Promise<IUser | string> {
+    public async getUserByEmailRecovery(email_recovery: string): Promise<IUser | null> {
         try {
             const user = await this.userDao.getUserByEmailRecovery(email_recovery);
             return user;
@@ -288,7 +288,6 @@ export default class UserService {
     public async updatePassword(token: string, newPassword: string): Promise<string> {
         try {
 
-            console.log(token);
             if (!token) {
                 throw ('Token não informado');
             }
@@ -319,7 +318,7 @@ export default class UserService {
             const user = await this.userDao.getUserByResetPasswordToken(token);
 
             if (!user) {
-                throw ('Usuário não encontrado');
+                throw ('Esse codigo de recuperação de senha não é válido, por favor solicite um novo código de recuperação de senha');
             }
 
             const userUpdated = await this.userDao.updateUserPassword(email, hashedPassword);
