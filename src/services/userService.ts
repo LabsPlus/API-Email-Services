@@ -11,6 +11,7 @@ import EmailValidator from "../helpers/validators/email_validator";
 import PasswordValidator from "../helpers/validators/password_validator";
 import RateLimit from "../utils/functions/rateLimit";
 import IForgotPassword from "../interfaces/user/forgotPassword";
+import CacheService from "./cacheService";
 
 export default class UserService {
 
@@ -20,6 +21,7 @@ export default class UserService {
     private emailService: EmailService;
     private cpfCnpjValidator: CpfCnpjValidator;
     private emailValidator: EmailValidator;
+    private cacheService: CacheService;
 
     constructor() {
         this.userDao = new UserDao();
@@ -27,6 +29,7 @@ export default class UserService {
         this.emailService = new EmailService();
         this.cpfCnpjValidator = new CpfCnpjValidator();
         this.emailValidator = new EmailValidator();
+        this.cacheService = new CacheService();
     }
 
     public async createUser(user: IUser): Promise<IUser> {
@@ -178,8 +181,9 @@ export default class UserService {
             throw ('Email não encontrado');
         }
 
-        const token = jwt.sign({ email }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+        const token = jwt.sign({ email }, process.env.JWT_SECRET as string, { expiresIn: '2h' });
 
+        this.cacheService.setCache(token, email);
 
         return token;
     }
@@ -337,6 +341,49 @@ export default class UserService {
         }
     }
 
+    public async getUserByAccessToken(token: any): Promise<IUser | null> {
+        try {
 
 
+            if (!token) {
+                throw ('Token não informado');
+            }
+
+            if (typeof (token) !== "string") {
+                throw ('Token inválido');
+            }
+
+            console.log(token+'vou decodar');
+
+            const email = await this.cacheService.getCache(token);
+
+            console.log(email+'email');
+            const user = await this.userDao.getUserByEmail(email);
+
+            if (!user) {
+                throw ('Usuário não encontrado');
+            }
+
+            return user;
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async logout(token: string): Promise<string> {
+        try {
+
+            if (!token) {
+                throw ('Token não informado');
+            }
+
+            this.cacheService.deleteCache(token);
+
+            return 'Usuário deslogado';
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
 }
