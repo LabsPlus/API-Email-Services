@@ -49,17 +49,6 @@ export default class UserController {
         }
     }
 
-    public async getUserById(request: Request, response: Response) {
-        try {
-            const id = parseInt(request.params.id);
-            const user = await this.userService.getUserById(id);
-            return response.status(200).json(user);
-        }
-        catch (error) {
-            return response.status(400).json({ error: 'Failed to get user by id' });
-        }
-    }
-
     public async updateUser(request: Request, response: Response) {
         try {
             const id = parseInt(request.params.id);
@@ -136,6 +125,55 @@ export default class UserController {
         }
         catch (error) {
             return response.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    public async getUserByAccessToken(request: Request, response: Response) {
+        try {
+           
+
+            const token = request.headers.authorization?.split(' ')[1];
+
+            console.log('veio o token'+token);
+            if (!token) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+
+            if (typeof(token) !== "string") {
+                return response.status(400).json({ error: 'Token inválido' });
+            }
+
+            const user = await this.userService.getUserByAccessToken(token);
+
+            return response.status(200).json(user);
+        }
+        catch (error) {
+            return response.status(400).json({  error: `${error}`  });
+        }
+    }
+
+    public async logout(request: Request, response: Response) {
+        try {
+            const token = request.body.accessToken;
+
+            if (!token) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+
+            if (typeof(token) !== "string") {
+                return response.status(400).json({ error: 'Token inválido' });
+            }
+
+            const logout = await this.userService.logout(token);
+
+            if (logout) {
+                return response.status(200).json({ message: 'Usuário deslogado com sucesso' });
+            }
+
+            return response.status(400).json({ error: 'Falha ao deslogar' });
+        }
+        catch (error) {
+            return response.status(400).json({  error: `${error}`  });
         }
     }
 }
