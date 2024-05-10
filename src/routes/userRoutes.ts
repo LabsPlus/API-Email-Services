@@ -3,17 +3,8 @@ import UserController from '../controllers/userController';
 
 const router = express.Router();
 const userController = new UserController();
-/**
- * id: number;
-    name: string;
-    cpf_cnpj: string;
-    phone_number: string;
-    email: string;
-    email_recovery: string;
-    password: string;
-    created_at?: Date;
-    updated_at?: Date;
- */
+
+
 /**
  * @swagger
  * /api/user/create:
