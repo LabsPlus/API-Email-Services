@@ -3,17 +3,8 @@ import UserController from '../controllers/userController';
 
 const router = express.Router();
 const userController = new UserController();
-/**
- * id: number;
-    name: string;
-    cpf_cnpj: string;
-    phone_number: string;
-    email: string;
-    email_recovery: string;
-    password: string;
-    created_at?: Date;
-    updated_at?: Date;
- */
+
+
 /**
  * @swagger
  * /api/user/create:
@@ -83,9 +74,7 @@ router.post('/create', async (req, res) => {
  *       '400':
  *         description: Erro ao buscar usuário.
  */
-router.get('/:id', async (req, res) => {
-    await userController.getUserById(req, res);
-});
+
 
 /**
  * @swagger
@@ -157,6 +146,37 @@ router.post('/forgot-password', async (req, res) => {
 
 router.post('/update-password', async (req, res) => {
     await userController.updatePassword(req, res);
+});
+
+//retorna um usuario, o parametro é o token no header e a resposta é um objeto do tipo IUser
+
+/**
+ * @swagger
+ * /api/user/getUserByAccessToken:
+ *      get:
+ *          summary: Buscar usuário pelo token de acesso.
+ *          description: Busca um usuário pelo token de acesso.
+ *          responses:
+ *              '200':
+ *                  description: Usuário encontrado.
+ *              '400':
+ *                  description: Erro ao buscar usuário.
+ *              '401':
+ *                  description: Usuário não autorizado.
+ *              '404':
+ *                  description: Usuário não encontrado.
+ *              '500':
+ *                  description: Erro interno do servidor.
+ * 
+ * 
+ */
+router.get('/getUserByAccessToken', async (req, res) => {
+    await userController.getUserByAccessToken(req, res);
+});
+
+//passamos o token no body
+router.post('/logout', async (req, res) => {
+    await userController.logout(req, res);
 });
 
 export default router;
