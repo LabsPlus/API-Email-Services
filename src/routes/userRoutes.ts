@@ -33,11 +33,11 @@ const userController = new UserController();
  *               created_at:
  *                type: string
  *                format: date-time
- *                description: Data da criação do usuário (opcional)
+ *                description: Data da criação do usuário (campo opcional)
  *               updated_at:
  *                type: string
  *                format: date-time
- *                description: Data da criação do usuário (opcional)
+ *                description: Data da criação do usuário (campo opcional)
  * 
  *     responses:
  *       '201':
