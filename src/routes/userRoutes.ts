@@ -30,14 +30,6 @@ const userController = new UserController();
  *                type: string
  *               password:
  *                type: string
- *               created_at:
- *                type: string
- *                format: date-time
- *                description: Data da criação do usuário (opcional)
- *               updated_at:
- *                type: string
- *                format: date-time
- *                description: Data da criação do usuário (opcional)
  * 
  *     responses:
  *       '201':
@@ -62,12 +54,6 @@ router.post('/create', async (req, res) => {
  *         description: ID do usuário.
  *         schema:
  *           type: integer
- *         created_at:
- *           type: string
- *           format: date-time
- *         updated_at:
- *           type: string
- *           format: date-time
  *     responses:
  *       '200':
  *         description: Usuário encontrado.
