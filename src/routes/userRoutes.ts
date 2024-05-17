@@ -30,6 +30,14 @@ const userController = new UserController();
  *                type: string
  *               password:
  *                type: string
+ *               created_at:
+ *                type: string
+ *                format: date-time
+ *                description: Data da criação do usuário (opcional)
+ *               updated_at:
+ *                type: string
+ *                format: date-time
+ *                description: Data da criação do usuário (opcional)
  * 
  *     responses:
  *       '201':
