@@ -71,6 +71,30 @@ router.post('/create', async (req, res) => {
  *     responses:
  *       '200':
  *         description: Usuário encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: number
+ *                 name:
+ *                   type: string
+ *                 cpf_cnpj:
+ *                   type: string
+ *                 phone_number:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 email_recovery:
+ *                   type: string
+ *                 password:
+ *                   type: string
+ *                 reset_password_token:
+ *                   type: string
+ *                 reset_password_expires:
+ *                   type: string
+ *                   format: date
  *       '400':
  *         description: Erro ao buscar usuário.
  */
