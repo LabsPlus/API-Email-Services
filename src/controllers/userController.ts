@@ -109,8 +109,7 @@ export default class UserController {
 
         try {
             const { token, password } = request.body;
-            console.log(token);
-            console.log(password);
+
             if (!token || !password) {
                 return response.status(400).json({ error: 'Dados inválidos' });
             }
@@ -134,7 +133,7 @@ export default class UserController {
 
             const token = request.headers.authorization?.split(' ')[1];
 
-            console.log('veio o token'+token);
+
             if (!token) {
                 return response.status(400).json({ error: 'Token não informado' });
             }

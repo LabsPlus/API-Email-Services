@@ -327,8 +327,6 @@ export default class UserService {
 
             const userUpdated = await this.userDao.updateUserPassword(email, hashedPassword);
 
-            console.log(userUpdated);
-            console.log('Atualizou senha');
             if (!userUpdated) {
                 throw ('Erro ao alterar senha');
             }
@@ -353,11 +351,10 @@ export default class UserService {
                 throw ('Token inválido');
             }
 
-            console.log(token+'vou decodar');
 
             const email = await this.cacheService.getCache(token);
 
-            console.log(email+'email');
+
             const user = await this.userDao.getUserByEmail(email);
 
             if (!user) {
