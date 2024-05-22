@@ -149,9 +149,21 @@ export default class UserService {
         }
     }
 
-    public async updateUser(id: number, userData: Partial<IUser>): Promise<IUser | null> {
+    public async updateUser(token: string, userData: Partial<IUser>): Promise<IUser | null> {
+        
         try {
-            const user = await this.userDao.updateuser(id, userData);
+
+            if (!token) {
+                throw ('Token não informado');
+            }
+
+            const email = await this.cacheService.getCache(token);
+
+            if (!email) {
+                throw ('Email não encontrado');
+            }
+
+            const user = await this.userDao.updateUserByEmail(email, userData);
             return user;
         } catch (error) {
             throw new Error(`Erro ao atualizar user: ${error}`);
