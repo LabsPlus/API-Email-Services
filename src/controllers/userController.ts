@@ -215,4 +215,56 @@ export default class UserController {
             return response.status(400).json({  error: `${error}`  });
         }
     }
+
+
+    public async validateUserPassword(request: Request, response: Response) {
+        
+        try {
+            
+            if (!request.headers.authorization) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+        
+            const parts = request.headers.authorization?.split(' ');
+        
+            if (!parts || parts.length < 2) {
+                return response.status(400).json({ error: 'Token inválido' });
+            }
+        
+            let accessToken = null;
+        
+            if(parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
+            if (!accessToken) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+            
+
+            const { password } = request.body;
+
+            if (!password) {
+                return response.status(400).json({ error: 'Senha não informada' });
+            }
+
+            if (!accessToken) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+
+            const isValidPassword = await this.userService.validateUserPassword(password, accessToken);
+
+            if (!isValidPassword) {
+                return response.status(200).json({ message: 'Senha inválida', isValidPassword: false });
+            }
+
+            return response.status(200).json({ message: 'Senha válida', isValidPassword: true });
+
+        } catch (error) {
+            return response.status(400).json(`${error}`);
+        }
+    }
 }
