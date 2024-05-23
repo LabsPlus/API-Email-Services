@@ -160,6 +160,30 @@ router.delete('/:id', async (req, res) => {
 });
 
 
+/**
+ * @swagger
+ * /api/user/updateUser:
+ *      put:
+ *          summary: Atualizar usuário.
+ *          description: Atualiza um usuário.
+ *          responses:
+ *              '200':
+ *                  description: Usuário atualizado.
+ *              '400':
+ *                  description: Erro ao atualizar usuário.
+ *              '401':
+ *                  description: Usuário não autorizado.
+ *              '404':
+ *                  description: Usuário não encontrado.
+ *              '500':
+ *                  description: Erro interno do servidor.
+ * 
+ * 
+ */
+router.put('/updateUser:', async (req, res) => {
+    await userController.updateUser(req, res);
+});
+
 router.post('/login', async (req, res) => {
     await userController.login(req, res);
 });

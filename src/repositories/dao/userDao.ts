@@ -99,6 +99,19 @@ export default class UserDao {
         }
     }
 
+    public async updateUserByEmail(email: string, userData: Partial<IUser>): Promise<IUser | null> {
+        try{
+            const user = await User.findOne({where: {email}});
+            if (!user) {
+                return null;
+            }
+            await user.update(userData);
+            return user;
+        }catch(error) {
+            throw new Error(`${error}`);
+        }
+    }
+
     public async updateUserPassword(email: string, password: string): Promise<IUser | null> {
         try{
             const user = await User.findOne({where: {email}});

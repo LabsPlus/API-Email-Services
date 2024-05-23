@@ -20,7 +20,9 @@ describe('UserDao', () => {
             email: 'anc@gmail.com',
             email_recovery: 'anc@gmail.com',
             password: '123456',
-            id: 0
+            id: 0,
+            reset_password_token: '',
+            reset_password_expires: new Date(),
         };
 
         // Mock da função createuser para retornar o usuário criado
@@ -49,7 +51,9 @@ describe('UserDao', () => {
             email: 'anc@gmail.com',
             email_recovery: 'anc@gmail.com',
             password: '123456',
-            id: 0
+            id: 0,
+            reset_password_token: '',
+            reset_password_expires: new Date(),
         };
 
         // Mock da função getuserById para retornar o usuário criado

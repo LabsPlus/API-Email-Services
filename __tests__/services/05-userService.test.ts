@@ -18,12 +18,14 @@ describe('UserService', () => {
     it('should create a user', async () => {
         const userData: IUser = {
             name: 'John Doe',
-            cpf_cnpj: '74995896171',
+            cpf_cnpj: '422.855.700-74',
             phone_number: '123456789',
             email: 'anc@gmail.com',
             email_recovery: 'anc@gmail.com',
-            password: '123456',
-            id: 0
+            password: 'Rio123456@',
+            id: 0,
+            reset_password_token: '',
+            reset_password_expires: new Date(),
         };
         const createdUser: IUser = {
             ...userData,
@@ -38,12 +40,14 @@ describe('UserService', () => {
         const userId = 1;
         const user: IUser = {
             name: 'John Doe',
-            cpf_cnpj: '74995896171',
+            cpf_cnpj: '422.855.700-74',
             phone_number: '123456789',
             email: 'anc@gmail.com',
             email_recovery: 'anc@gmail.com',
-            password: '123456',
-            id: 0
+            password: 'Rio123456@',
+            id: 0,
+            reset_password_token: '',
+            reset_password_expires: new Date(),
         };
         (UserDao.prototype.getuserById as jest.Mock).mockResolvedValueOnce(user);
 
@@ -59,15 +63,17 @@ describe('UserService', () => {
         const updatedUser: IUser = {
             id: userId,
             name: 'John Doe',
-            cpf_cnpj: '74995896171',
+            cpf_cnpj: '422.855.700-74',
             phone_number: '123456789',
             email: 'anc@gmail.com',
             email_recovery: 'anc@gmail.com',
-            password: '123456'
+            password: 'Rio123456@',
+            reset_password_token: '',
+            reset_password_expires: new Date(),
         };
         (UserDao.prototype.updateuser as jest.Mock).mockResolvedValueOnce(updatedUser);
-
-        const result = await userService.updateUser(userId, userDataToUpdate);
+        const accessToken = 'Bearer token123';
+        const result = await userService.updateUser(accessToken, userDataToUpdate);
         expect(result).toEqual(updatedUser);
     });
 

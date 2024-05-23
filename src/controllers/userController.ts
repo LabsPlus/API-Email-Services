@@ -51,13 +51,38 @@ export default class UserController {
 
     public async updateUser(request: Request, response: Response) {
         try {
-            const id = parseInt(request.params.id);
+
+            if (!request.headers.authorization) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+        
+            const parts = request.headers.authorization?.split(' ');
+        
+            if (!parts || parts.length < 2) {
+                return response.status(400).json({ error: 'Token inválido' });
+            }
+        
+            let accessToken = null;
+        
+            if(parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
             const userData = request.body;
-            const user = await this.userService.updateUser(id, userData);
+
+            if (!accessToken) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+            
+            const user = await this.userService.updateUser(accessToken, userData);
+
             return response.status(200).json(user);
         }
         catch (error) {
-            return response.status(400).json({ error: 'Failed to update user' });
+            return response.status(400).json({ error: 'Failed to update user'+`${error}`});
         }
     }
 
@@ -131,18 +156,33 @@ export default class UserController {
         try {
            
 
-            const token = request.headers.authorization?.split(' ')[1];
+            if (!request.headers.authorization) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+        
+            const parts = request.headers.authorization?.split(' ');
+        
+            if (!parts || parts.length < 2) {
+                return response.status(400).json({ error: 'Token inválido' });
+            }
+        
+            let accessToken = null;
+        
+            if(parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
+            const userData = request.body;
 
 
-            if (!token) {
+            if (!accessToken) {
                 return response.status(400).json({ error: 'Token não informado' });
             }
 
-            if (typeof(token) !== "string") {
-                return response.status(400).json({ error: 'Token inválido' });
-            }
-
-            const user = await this.userService.getUserByAccessToken(token);
+            const user = await this.userService.getUserByAccessToken(accessToken);
 
             return response.status(200).json(user);
         }
