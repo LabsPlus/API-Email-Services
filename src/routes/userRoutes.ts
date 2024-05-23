@@ -227,4 +227,8 @@ router.post('/logout', async (req, res) => {
     await userController.logout(req, res);
 });
 
+router.post('/validateUserPassword', async (req, res) => {
+    await userController.validateUserPassword(req, res);
+});
+
 export default router;

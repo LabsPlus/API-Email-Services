@@ -380,6 +380,43 @@ export default class UserService {
         }
     }
 
+    public async validateUserPassword(password: string, accessToken: string) : Promise<boolean> {
+        try {
+
+            if (!password) {
+                throw ('Senha não informada');
+            }
+
+            if (!accessToken) {
+                throw ('Token não informado');
+            }
+
+            const email = await this.cacheService.getCache(accessToken);
+
+            if (!email) {
+                throw ('Email não encontrado');
+            }
+
+            const user = await this.userDao.getUserByEmail(email);
+
+            if (!user) {
+                throw ('Usuário não encontrado');
+            }
+
+            const validPassword = await this.comparePassword(password, user.password);
+
+            if (!validPassword) {
+                return false;
+            }
+
+            return true;
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+
+    }
+
     public async logout(token: string): Promise<string> {
         try {
 
