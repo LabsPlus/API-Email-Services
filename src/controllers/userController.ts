@@ -32,20 +32,21 @@ export default class UserController {
     public async login(request: Request, response: Response) {
         try {
             const { email, password } = request.body;
-            const user = await this.userService.getUserByEmail(email);
-            if (user) {
-                const validPassword = await this.userService.comparePassword(password, user.password);
-                if (validPassword) {
-                    const token = await this.userService.generateToken(email);
-                    return response.status(200).json({ token });
-                } else {
-                    return response.status(401).json({ message: "Senha inválida" });
-                }
-            } else {
-                return response.status(404).json({ message: "Usuário não encontrado" });
+            
+            if (!email || !password) {
+                return response.status(400).json({ error: 'Dados inválidos' });
             }
+
+            const token = await this.userService.login(email, password);
+
+            if (!token) {
+                return response.status(401).json({ error: 'Falha ao logar' });
+            }
+
+            return response.status(200).json({ token: token });
+
         } catch (error) {
-            return response.status(500).json({ error: "Internal Server Error" });
+            return response.status(400).json(`${error}`);
         }
     }
 
