@@ -366,7 +366,7 @@ export default class UserService {
 
             const email = await this.cacheService.getCache(token);
 
-
+            
             const user = await this.userDao.getUserByEmail(email);
 
             if (!user) {
@@ -415,6 +415,26 @@ export default class UserService {
             throw new Error(`${error}`);
         }
 
+    }
+
+    public async isLoggedIn(token: string): Promise<boolean> {
+        try {
+
+            if (!token) {
+                throw ('Token não informado');
+            }
+
+            const email = await this.cacheService.getCache(token);
+
+            if (!email) {
+                return false;
+            }
+
+            return true;
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
     }
 
     public async logout(token: string): Promise<string> {

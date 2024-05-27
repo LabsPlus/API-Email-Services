@@ -267,4 +267,43 @@ export default class UserController {
             return response.status(400).json(`${error}`);
         }
     }
+
+    public async isLoggedIn(request: Request, response: Response) {
+
+        try {
+            if (!request.headers.authorization) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+        
+            const parts = request.headers.authorization?.split(' ');
+        
+            if (!parts || parts.length < 2) {
+                return response.status(400).json({ error: 'Token inválido' });
+            }
+        
+            let accessToken = null;
+        
+            if(parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
+            if (!accessToken) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+
+            const isLoggedIn = await this.userService.isLoggedIn(accessToken);
+
+            if (!isLoggedIn) {
+                return response.status(200).json({ message: 'Usuário não está logado', isLoggedIn: false });
+            }
+
+            return response.status(200).json({ message: 'Usuário está logado', isLoggedIn: true });
+
+        } catch (error) {
+            return response.status(400).json(`${error}`);
+        }
+    }
 }

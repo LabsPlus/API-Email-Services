@@ -231,4 +231,8 @@ router.post('/validateUserPassword', async (req, res) => {
     await userController.validateUserPassword(req, res);
 });
 
+router.get('/isLoggedIn', async (req, res) => {
+    await userController.isLoggedIn(req, res);
+});
+
 export default router;
