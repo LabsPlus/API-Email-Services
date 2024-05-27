@@ -79,7 +79,7 @@ export default class UserService {
             const user = await this.userDao.getuserById(id);
             return user;
         } catch (error) {
-            throw new Error(`Erro ao buscar user: ${error}`);
+            throw new Error(`${error}`);
         }
     }
 
@@ -150,20 +150,20 @@ export default class UserService {
     }
 
     public async updateUser(token: string, userData: Partial<IUser>): Promise<IUser | null> {
-        
+
         try {
 
             if (!token) {
                 throw ('Token não informado');
             }
 
-            const email = await this.cacheService.getCache(token);
+            const id = await this.cacheService.getCache(token);
 
-            if (!email) {
-                throw ('Email não encontrado');
+            if (!id) {
+                throw ('Usuario não encontrado');
             }
 
-            const user = await this.userDao.updateUserByEmail(email, userData);
+            const user = await this.userDao.updateuser(parseInt(id), userData);
             return user;
         } catch (error) {
             throw new Error(`Erro ao atualizar user: ${error}`);
@@ -178,27 +178,65 @@ export default class UserService {
         }
     }
 
+    public async generateAccessToken(id: number): Promise<string> {
 
-    public async generateToken(email: string): Promise<string> {
-
-        if (!email) {
-            throw ('Email não informado');
+        if (!id) {
+            throw ('ID não informado');
         }
 
-        if (!await this.emailValidator.isEmailValid(email)) {
-            throw ('Email inválido');
+        const user = await this.userDao.getuserById(id);
+
+        if (!user) {
+            throw ('Usuário não encontrado');
         }
 
-        if (!await this.checkEmailExists(email)) {
-            throw ('Email não encontrado');
-        }
+        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET as string, { expiresIn: '2h' });
 
-        const token = jwt.sign({ email }, process.env.JWT_SECRET as string, { expiresIn: '2h' });
-
-        this.cacheService.setCache(token, email);
+        this.cacheService.setCache(token, user.id.toString());
 
         return token;
     }
+
+    public async login(email: string, password: string): Promise<string> {
+        try {
+
+            if (!email) {
+                throw ('Email não informado');
+            }
+
+            if (!password) {
+                throw ('Senha não informada');
+            }
+
+            if (!await this.emailValidator.isEmailValid(email)) {
+                throw ('Email inválido');
+            }
+
+            if (!await this.checkEmailExists(email)) {
+                throw ('Email não encontrado');
+            }
+
+            const user = await this.userDao.getUserByEmail(email);
+
+            if (!user) {
+                throw ('Usuário não encontrado');
+            }
+
+            const validPassword = await this.comparePassword(password, user.password);
+
+            if (!validPassword) {
+                throw ('Senha inválida');
+            }
+
+            const token = await this.generateAccessToken(user.id);
+
+            return token;
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
 
     public async comparePassword(password: string, hash: string): Promise<boolean> {
         const validPassword = await bcrypt.compare(password, hash);
@@ -260,7 +298,7 @@ export default class UserService {
                 throw ('Email não encontrado');
             }
 
-            if (RateLimit.isRateLimited(user.ip)){
+            if (RateLimit.isRateLimited(user.ip)) {
                 throw ('Muitas tentativas, este IP foi bloqueado por 15 minutos');
             }
 
@@ -275,7 +313,7 @@ export default class UserService {
 
             const resetLink = `${process.env.FRONT_END_URL}/new-password?ResetPasswordToken=${resetToken}`;
 
-            this.userDao.updateUserResetPasswordToken(user.email_recovery, resetToken, new Date(Date.now()+3600000));
+            this.userDao.updateUserResetPasswordToken(user.email_recovery, resetToken, new Date(Date.now() + 3600000));
 
             const emailData = {
                 from: process.env.EMAIL_LABS_CLIENT as string,
@@ -307,7 +345,7 @@ export default class UserService {
             if (!token) {
                 throw ('Token não informado');
             }
- 
+
             if (!newPassword) {
                 throw ('Nova senha não informada');
             }
@@ -364,10 +402,10 @@ export default class UserService {
             }
 
 
-            const email = await this.cacheService.getCache(token);
+            const id = await this.cacheService.getCache(token);
 
-            
-            const user = await this.userDao.getUserByEmail(email);
+
+            const user = await this.userDao.getuserById(parseInt(id));
 
             if (!user) {
                 throw ('Usuário não encontrado');
@@ -380,7 +418,7 @@ export default class UserService {
         }
     }
 
-    public async validateUserPassword(password: string, accessToken: string) : Promise<boolean> {
+    public async validateUserPassword(password: string, accessToken: string): Promise<boolean> {
         try {
 
             if (!password) {
@@ -391,13 +429,13 @@ export default class UserService {
                 throw ('Token não informado');
             }
 
-            const email = await this.cacheService.getCache(accessToken);
+            const id = await this.cacheService.getCache(accessToken);
 
-            if (!email) {
-                throw ('Email não encontrado');
+            if (!id) {
+                throw ('Usuario não encontrado');
             }
 
-            const user = await this.userDao.getUserByEmail(email);
+            const user = await this.userDao.getuserById(parseInt(id));
 
             if (!user) {
                 throw ('Usuário não encontrado');
@@ -424,9 +462,9 @@ export default class UserService {
                 throw ('Token não informado');
             }
 
-            const email = await this.cacheService.getCache(token);
+            const id = await this.cacheService.getCache(token);
 
-            if (!email) {
+            if (!id) {
                 return false;
             }
 
