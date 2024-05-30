@@ -163,6 +163,12 @@ export default class UserService {
                 throw ('Usuario não encontrado');
             }
 
+            if(userData.password){
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(userData.password, salt);
+                userData.password = hashedPassword;
+            }            
+           
             const user = await this.userDao.updateuser(parseInt(id), userData);
             return user;
         } catch (error) {
