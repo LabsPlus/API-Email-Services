@@ -14,6 +14,9 @@ class User extends Model implements IUser{
   public profile_photo!: string;
   public reset_password_token!: string;
   public reset_password_expires!: Date;
+  public deletion_requested_at!: Date;
+  public deletion_scheduled_at!: Date;
+
 }
 
 User.init(
@@ -75,6 +78,14 @@ User.init(
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: new Date(),
+    },
+    deletion_requested_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    deletion_scheduled_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   },
   {
