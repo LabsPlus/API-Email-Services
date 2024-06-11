@@ -98,6 +98,67 @@ export default class UserController {
         }
     }
 
+    public async scheduleUserDeletion(request: Request, response: Response) {
+        try {
+
+            if (!request.headers.authorization) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+        
+            const parts = request.headers.authorization?.split(' ');
+        
+            if (!parts || parts.length < 2) {
+                return response.status(400).json({ error: 'Token inválido' });
+            }
+        
+            let accessToken = null;
+        
+            if(parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
+            const serviceResponse = await this.userService.scheduleUserDeletion(accessToken);
+            return response.status(200).json({ message: serviceResponse });
+        }
+        catch (error) {
+            return response.status(400).json( { error: `${error}` });
+        }
+    }
+
+    public async reactivateUserProfile(request: Request, response: Response) {
+        try {
+
+            if (!request.headers.authorization) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+        
+            const parts = request.headers.authorization?.split(' ');
+        
+            if (!parts || parts.length < 2) {
+                return response.status(400).json({ error: 'Token inválido' });
+            }
+        
+            let accessToken = null;
+        
+            if(parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
+            const serviceResponse = await this.userService.reactivateUser(accessToken);
+            return response.status(200).json({ message: serviceResponse });
+        }
+        catch (error) {
+            return response.status(400).json( { error: `${error}` });
+        }
+    }
+
+
     public async forgotPassword(request: Request, response: Response) {
         try {
             const email_recovery : string = request.body.email_recovery;
