@@ -12,6 +12,8 @@ import { errorMiddleware } from "./middlewares/error";
 import EnqueueService from "./services/enqueueService";
 import RedisClient from "./clients/redis/redis_client";
 import { corsConfig } from "./middlewares/cors.config";
+import UserServices from "./services/userService";
+import { CronJob } from "cron"; // Import the CronJob class
 
 require("dotenv").config();
 
@@ -20,7 +22,7 @@ const port = process.env.PORT || 3000;
 
 // Intervalo de tempo para execução da função consumeEmailQueue
 const queueJobInterval = parseInt(process.env.QUEUE_JOB_INTERVAL ?? "30000");
-
+const userService = new UserServices();
 
 // Middleware
 app.use(express.json());
@@ -56,6 +58,11 @@ database.authenticate().then(() => {
       return setupRoutes();
     });
 
+    //vamos criar um trabalho que será executado todo dias as 00:00
+    const job = new CronJob('00 00 00 * * *', async () => {
+      console.log('Executando a rotina de deleção de usuários agendados');
+      await userService.deleteUserByDeletionScheduledAt();
+    });
 
     // Iniciar a execução da função consumeEmailQueue em intervalos regulares (aqui a cada 1 minuto)
     const emailQueueInstance = new EnqueueService(); // Substitua YourEmailQueueClass pela sua classe real
