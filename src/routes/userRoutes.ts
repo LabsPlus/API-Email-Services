@@ -243,4 +243,8 @@ router.get('/reactivateUserProfile', async (req, res) => {
     await userController.reactivateUserProfile(req, res);
 });
 
+router.get('/getAllKeysFromUser', async (req, res) => {
+    await userController.getAllKeysFromUser(req, res);
+});
+
 export default router;
