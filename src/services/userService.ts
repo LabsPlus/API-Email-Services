@@ -12,6 +12,8 @@ import PasswordValidator from "../helpers/validators/password_validator";
 import RateLimit from "../utils/functions/rateLimit";
 import IForgotPassword from "../interfaces/user/forgotPassword";
 import CacheService from "./cacheService";
+import KeyService from "./keyService";
+import { IKey } from "../interfaces/key/keyInterface";
 
 export default class UserService {
 
@@ -22,6 +24,7 @@ export default class UserService {
     private cpfCnpjValidator: CpfCnpjValidator;
     private emailValidator: EmailValidator;
     private cacheService: CacheService;
+    private keyService: KeyService;
 
     constructor() {
         this.userDao = new UserDao();
@@ -30,6 +33,7 @@ export default class UserService {
         this.cpfCnpjValidator = new CpfCnpjValidator();
         this.emailValidator = new EmailValidator();
         this.cacheService = new CacheService();
+        this.keyService = new KeyService();
     }
 
     public async createUser(user: IUser): Promise<IUser> {
@@ -571,4 +575,31 @@ export default class UserService {
             throw new Error(`${error}`);
         }
     }
+
+    public async getAllKeysFromUser(accessToken: string): Promise<IKey[]> {
+        try {
+
+            if (!accessToken) {
+                throw ('Token não informado');
+            }
+
+            const id = await this.cacheService.getCache(accessToken);
+
+            if (!id) {
+                throw ('Usuario não encontrado');
+            }
+
+            const keys = await this.keyService.getAllKeysByUserId(parseInt(id));
+
+            if (!keys || keys.length === 0) {
+                throw ('Chaves não encontradas');
+            }
+
+            return keys;
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
 }

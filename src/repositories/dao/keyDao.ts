@@ -79,4 +79,18 @@ export default class KeyDao {
             throw new Error(`Erro ao buscar chaves: ${error}`);
         }
     }
+
+    public async getAllKeysByUserId(user_id: number): Promise<IKey[]> {
+        try {
+            
+            let keys = await Key.findAll({ where: { user_id } }) as IKey[];
+
+            return keys;
+
+        }
+        catch (error) {
+            throw new Error(`Erro ao buscar chaves por ID do usuário: ${error}`);
+        }
+    }
+
 }

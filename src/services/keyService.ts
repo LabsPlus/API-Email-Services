@@ -5,7 +5,7 @@ import bycript from 'bcrypt';
 export default class KeyService {
 
     private keyDao: KeyDao;
-
+    
     constructor() {
         this.keyDao = new KeyDao();
     }
@@ -72,6 +72,15 @@ export default class KeyService {
             return key;
         } catch (error) {
             throw new Error(`Erro ao buscar chave por ID: ${error}`);
+        }
+    }
+
+    public async getAllKeysByUserId(user_id: number): Promise<IKey[]> {
+        try {
+            const keys = await this.keyDao.getAllKeysByUserId(user_id);
+            return keys;
+        } catch (error) {
+            throw new Error(`Erro ao buscar chaves por ID do usuário: ${error}`);
         }
     }
 
