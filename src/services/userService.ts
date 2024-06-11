@@ -163,12 +163,12 @@ export default class UserService {
                 throw ('Usuario não encontrado');
             }
 
-            if(userData.password){
+            if (userData.password) {
                 const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(userData.password, salt);
                 userData.password = hashedPassword;
-            }            
-           
+            }
+
             const user = await this.userDao.updateuser(parseInt(id), userData);
             return user;
         } catch (error) {
@@ -183,6 +183,81 @@ export default class UserService {
             throw new Error(`Erro ao excluir user: ${error}`);
         }
     }
+
+
+    public async scheduleUserDeletion(accessToken: string): Promise<string> {
+
+        try {
+
+            if (!accessToken) {
+                throw ('Token não informado');
+            }
+
+            const timeToDelete = 2592000000;
+            const scheduleDate = new Date(Date.now() + timeToDelete);
+
+            const id = await this.cacheService.getCache(accessToken);
+
+            if (!id) {
+                throw ('Usuario não encontrado');
+            }
+
+            const user = await this.userDao.getuserById(parseInt(id));
+
+            if (!user) {
+                throw ('Usuário não encontrado');
+            }
+
+            const response = await this.userDao.scheduleUserDeletion(user.id, scheduleDate);
+
+            return response;
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async deleteUserByDeletionScheduledAt(): Promise<void> {
+
+        try {
+
+            const todayDate = new Date();
+            await this.userDao.deleteUserByDeletionScheduledAt(todayDate);
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async reactivateUser(accessToken: string): Promise<string> {
+
+        try {
+
+            if (!accessToken) {
+                throw ('Token não informado');
+            }
+
+            const id = await this.cacheService.getCache(accessToken);
+
+            if (!id) {
+                throw ('ID não encontrado no cache');
+            }
+
+            const user = await this.userDao.getuserById(parseInt(id));
+
+            if (!user) {
+                throw ('Usuário não encontrado');
+            }
+
+            const response = await this.userDao.reactivateUser(user.id);
+
+            return response;
+        }
+        catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
 
     public async generateAccessToken(id: number): Promise<string> {
 

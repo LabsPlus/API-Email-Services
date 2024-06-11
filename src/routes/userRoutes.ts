@@ -235,4 +235,12 @@ router.get('/isLoggedIn', async (req, res) => {
     await userController.isLoggedIn(req, res);
 });
 
+router.post('/scheduleUserDeletion', async (req, res) => {
+    await userController.scheduleUserDeletion(req, res);
+});
+
+router.get('/reactivateUserProfile', async (req, res) => {
+    await userController.reactivateUserProfile(req, res);
+});
+
 export default router;

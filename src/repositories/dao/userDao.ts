@@ -54,6 +54,62 @@ export default class UserDao {
         }
     }
 
+    public async scheduleUserDeletion(id: number, date: Date): Promise<string> {
+        try {
+            const user = await User.findByPk(id);
+
+            if (!user) {
+                return 'Usuário não encontrado';
+            }
+
+            const todayDate = new Date();
+
+            await user.update({deletion_scheduled_at: date, deletion_requested_at: todayDate});
+
+            return 'Deleção de perfil agendada com sucesso';
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+    
+    public async deleteUserByDeletionScheduledAt(date: Date): Promise<string> {
+        try {
+            
+            const users = await User.findAll({where: {deletion_scheduled_at: date}});
+            
+            if (!users) {
+                return 'Nenhum usuário encontrado';
+            }
+
+            users.forEach(async user => {
+                await user.destroy();
+            });
+
+            return 'Usuários deletados com sucesso';
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async reactivateUser(id: number): Promise<string> {
+
+        try {
+            const user = await User.findByPk(id);
+
+            if (!user) {
+                return 'Usuário não encontrado';
+            }
+
+            await user.update({deletion_scheduled_at: null, deletion_requested_at: null});
+
+            return 'Perfil reativado com sucesso';
+        }
+        catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    
     public async getUserByEmail(email: string): Promise<IUser | null> {
         try{
             const login = await User.findOne({where: {email}});
