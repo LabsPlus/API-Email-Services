@@ -6,6 +6,8 @@ import { EmailService } from "./emailService";
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { ForgotPasswordMessage } from "../utils/messages/forgot_password_message";
+import { UpdateEmailRecoveryMessage } from "../utils/messages/update_email_recovery_message";
+import { UpdateEmailMessage } from "../utils/messages/update_email_message";
 import CpfCnpjValidator from "../helpers/validators/cpf_cnpj_validator";
 import EmailValidator from "../helpers/validators/email_validator";
 import PasswordValidator from "../helpers/validators/password_validator";
@@ -602,4 +604,254 @@ export default class UserService {
         }
     }
 
+    public async requestUpdateEmail(email: string, accessToken: string): Promise<IUser | string> {
+
+        try {
+
+            if (!email) {
+                throw ('Email não informado');
+            }
+
+            if (!accessToken) {
+                throw ('Token não informado');
+            }
+
+            if (!await this.emailValidator.isEmailValid(email)) {
+                throw ('Email inválido');
+            }
+
+            if (await this.checkEmailExists(email)) {
+                throw ('Email já cadastrado');
+            }
+
+            const id = await this.cacheService.getCache(accessToken);
+
+            if (!id) {
+                throw ('Usuario não encontrado');
+            }
+
+            const user = await this.userDao.getuserById(parseInt(id));
+
+            if (!user) {
+                throw ('Usuário não encontrado');
+            }
+
+            const emailToken = jwt.sign({ email }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+            const idToken = jwt.sign({ id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+
+            const link = `${process.env.BACK_END_URL}/api/user/updateEmail?UpdateEmailToken=${emailToken}&IdUser=${idToken}`;
+
+            const emailData = {
+                from: process.env.SMTP_EMAIL_SENDER as string,
+                to: user.email,
+                subject: 'Alteração de email',
+                text: UpdateEmailMessage.updateEmailMessage(user.name, link),
+                html: UpdateEmailMessage.updateEmailMessage(user.name, link),
+                apiKey: process.env.API_EMAIL_KEY as string,
+            } as Email;
+
+            const emailSent = await this.emailService.sendEmail(emailData);
+
+            if (!emailSent) {
+                throw ('Erro ao enviar email');
+            }
+
+            const userUpdatedParcialy = user;
+            userUpdatedParcialy.email = email;
+
+            return userUpdatedParcialy;
+
+        }
+        catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+
+    public async requestUpdateEmailRecovery(email_recovery: string, accessToken: string): Promise<IUser | string> {
+
+        try {
+
+            if (!email_recovery) {
+                throw ('Email de recuperação não informado');
+            }
+
+            if (!accessToken) {
+                throw ('Token não informado');
+            }
+
+            if (!await this.emailValidator.isEmailValid(email_recovery)) {
+                throw ('Email de recuperação inválido');
+            }
+
+            if (await this.checkEmailRecoveryExists(email_recovery)) {
+                throw ('Email de recuperação já cadastrado');
+            }
+
+            const id = await this.cacheService.getCache(accessToken);
+
+            if (!id) {
+                throw ('Usuario não encontrado');
+            }
+
+            const user = await this.userDao.getuserById(parseInt(id));
+
+            if (!user) {
+                throw ('Usuário não encontrado');
+            }
+
+            const emailRecoveryToken = jwt.sign({ email_recovery }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+            const idToken = jwt.sign({ id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+
+            const link = `${process.env.BACK_END_URL}/api/user/updateEmailRecovery?UpdateEmailRecoveryToken=${emailRecoveryToken}&IdUser=${idToken}`;
+
+            const emailData = {
+                from: process.env.SMTP_EMAIL_SENDER as string,
+                to: user.email_recovery,
+                subject: 'Alteração de email de recuperação',
+                text: UpdateEmailRecoveryMessage.updateEmailMessage(user.name, link),
+                html: UpdateEmailRecoveryMessage.updateEmailMessage(user.name, link),
+                apiKey: process.env.API_EMAIL_KEY as string,
+            } as Email;
+
+            const emailSent = await this.emailService.sendEmail(emailData);
+
+            if (!emailSent) {
+                throw ('Erro ao enviar email');
+            }
+
+            const userUpdatedParcialy = user;
+            userUpdatedParcialy.email_recovery = email_recovery;
+
+            return userUpdatedParcialy;
+        }
+        catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+
+    public async updateEmailByToken(emailToken: string, userIdToken: string): Promise<string> {
+
+        try {
+
+            if (!emailToken) {
+                throw ('Token não informado');
+            }
+
+            const decodedEmail = jwt.verify(emailToken, process.env.JWT_SECRET as string) as JwtPayload;
+            const decodedId = jwt.verify(userIdToken, process.env.JWT_SECRET as string) as JwtPayload;
+
+            if (!decodedEmail) {
+                throw ('Token de Email inválido');
+            }
+
+            if(!decodedId) {
+                throw ('Token para ID é inválido');
+            }
+
+            const email = decodedEmail.email;
+            const id = decodedId.id;
+
+            if (!email) {
+                throw ('Email não informado');
+            }
+
+            if (!id) {
+                throw ('ID não informado');
+            }
+
+            if (!await this.emailValidator.isEmailValid(email)) {
+                throw ('Email inválido');
+            }
+
+            if (await this.checkEmailExists(email)) {
+                throw ('Email já cadastrado');
+            }
+
+            const user = await this.userDao.getuserById(id);
+
+            if (!user) {
+                throw ('Usuario não encontrado');
+            }
+
+
+            const userData = {
+                email: email,
+            } as IUser;
+
+            const userUpdated = await this.userDao.updateuser(user.id, userData);
+
+            if (!userUpdated) {
+                throw ('Erro ao atualizar email');
+            }
+
+            return 'Email atualizado com sucesso';
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    
+    public async updateEmailRecoveryByToken(emailRecoveryToken: string, userIdToken: string): Promise<string> {
+
+        try {
+
+            if (!emailRecoveryToken) {
+                throw ('Token não informado');
+            }
+
+            const decodedEmailRecovery = jwt.verify(emailRecoveryToken, process.env.JWT_SECRET as string) as JwtPayload;
+            const decodedId = jwt.verify(userIdToken, process.env.JWT_SECRET as string) as JwtPayload;
+
+            if (!decodedEmailRecovery) {
+                throw ('Token de Email de recuperação inválido');
+            }
+
+            if(!decodedId) {
+                throw ('Token para ID é inválido');
+            }
+
+            const email_recovery = decodedEmailRecovery.email_recovery;
+            const id = decodedId.id;
+
+            if (!email_recovery) {
+                throw ('Email de recuperação não informado');
+            }
+
+            if (!id) {
+                throw ('ID não informado');
+            }
+
+            if (!await this.emailValidator.isEmailValid(email_recovery)) {
+                throw ('Email de recuperação inválido');
+            }
+
+            if (await this.checkEmailRecoveryExists(email_recovery)) {
+                throw ('Email de recuperação já cadastrado');
+            }
+
+            const user = await this.userDao.getuserById(id);
+
+            if (!user) {
+                throw ('Usuario não encontrado');
+            }
+
+            const userData = {
+                email_recovery: email_recovery,
+            } as IUser;
+
+            const userUpdated = await this.userDao.updateuser(user.id, userData);
+
+            if (!userUpdated) {
+                throw ('Erro ao atualizar email de recuperação');
+            }
+
+            return 'Email de recuperação atualizado com sucesso';
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
 }

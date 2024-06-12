@@ -2,7 +2,7 @@ import IForgotPassword from "../interfaces/user/forgotPassword";
 import { IUser } from "../interfaces/user/userInterface";
 import UserService from "../services/userService";
 import { Request, Response, NextFunction } from "express";
-
+import { EmailChangeWithSuccessHtml } from "../utils/pages/email_change_with_success_html";
 export default class UserController {
 
     private userService: UserService;
@@ -32,7 +32,7 @@ export default class UserController {
     public async login(request: Request, response: Response) {
         try {
             const { email, password } = request.body;
-            
+
             if (!email || !password) {
                 return response.status(400).json({ error: 'Dados inválidos' });
             }
@@ -56,16 +56,16 @@ export default class UserController {
             if (!request.headers.authorization) {
                 return response.status(400).json({ error: 'Token não informado' });
             }
-        
+
             const parts = request.headers.authorization?.split(' ');
-        
+
             if (!parts || parts.length < 2) {
                 return response.status(400).json({ error: 'Token inválido' });
             }
-        
+
             let accessToken = null;
-        
-            if(parts[0] === 'Bearer') {
+
+            if (parts[0] === 'Bearer') {
                 accessToken = parts[1];
             }
             else {
@@ -77,13 +77,13 @@ export default class UserController {
             if (!accessToken) {
                 return response.status(400).json({ error: 'Token não informado' });
             }
-            
+
             const user = await this.userService.updateUser(accessToken, userData);
 
             return response.status(200).json(user);
         }
         catch (error) {
-            return response.status(400).json({ error: 'Failed to update user'+`${error}`});
+            return response.status(400).json({ error: 'Failed to update user' + `${error}` });
         }
     }
 
@@ -104,16 +104,16 @@ export default class UserController {
             if (!request.headers.authorization) {
                 return response.status(400).json({ error: 'Token não informado' });
             }
-        
+
             const parts = request.headers.authorization?.split(' ');
-        
+
             if (!parts || parts.length < 2) {
                 return response.status(400).json({ error: 'Token inválido' });
             }
-        
+
             let accessToken = null;
-        
-            if(parts[0] === 'Bearer') {
+
+            if (parts[0] === 'Bearer') {
                 accessToken = parts[1];
             }
             else {
@@ -124,7 +124,7 @@ export default class UserController {
             return response.status(200).json({ message: serviceResponse });
         }
         catch (error) {
-            return response.status(400).json( { error: `${error}` });
+            return response.status(400).json({ error: `${error}` });
         }
     }
 
@@ -134,16 +134,16 @@ export default class UserController {
             if (!request.headers.authorization) {
                 return response.status(400).json({ error: 'Token não informado' });
             }
-        
+
             const parts = request.headers.authorization?.split(' ');
-        
+
             if (!parts || parts.length < 2) {
                 return response.status(400).json({ error: 'Token inválido' });
             }
-        
+
             let accessToken = null;
-        
-            if(parts[0] === 'Bearer') {
+
+            if (parts[0] === 'Bearer') {
                 accessToken = parts[1];
             }
             else {
@@ -154,15 +154,15 @@ export default class UserController {
             return response.status(200).json({ message: serviceResponse });
         }
         catch (error) {
-            return response.status(400).json( { error: `${error}` });
+            return response.status(400).json({ error: `${error}` });
         }
     }
 
 
     public async forgotPassword(request: Request, response: Response) {
         try {
-            const email_recovery : string = request.body.email_recovery;
-            const ip : string = request.body.ip;
+            const email_recovery: string = request.body.email_recovery;
+            const ip: string = request.body.ip;
 
             const userRecovery = {
                 ip: ip,
@@ -174,9 +174,9 @@ export default class UserController {
             }
 
             const user = await this.userService.getUserByEmailRecovery(email_recovery);
-         
-            if (typeof(user) === "string") {
-                return response.status(404).json({ error: user});
+
+            if (typeof (user) === "string") {
+                return response.status(404).json({ error: user });
             }
 
             const forgotPassword = await this.userService.forgotPassword(userRecovery);
@@ -188,7 +188,7 @@ export default class UserController {
             return response.status(400).json({ error: 'Falha ao enviar email' });
         }
         catch (error) {
-            return response.status(400).json( { error: `${error}` });
+            return response.status(400).json({ error: `${error}` });
         }
     }
 
@@ -216,21 +216,21 @@ export default class UserController {
 
     public async getUserByAccessToken(request: Request, response: Response) {
         try {
-           
+
 
             if (!request.headers.authorization) {
                 return response.status(400).json({ error: 'Token não informado' });
             }
-        
+
             const parts = request.headers.authorization?.split(' ');
-        
+
             if (!parts || parts.length < 2) {
                 return response.status(400).json({ error: 'Token inválido' });
             }
-        
+
             let accessToken = null;
-        
-            if(parts[0] === 'Bearer') {
+
+            if (parts[0] === 'Bearer') {
                 accessToken = parts[1];
             }
             else {
@@ -249,7 +249,7 @@ export default class UserController {
             return response.status(200).json(user);
         }
         catch (error) {
-            return response.status(400).json({  error: `${error}`  });
+            return response.status(400).json({ error: `${error}` });
         }
     }
 
@@ -261,7 +261,7 @@ export default class UserController {
                 return response.status(400).json({ error: 'Token não informado' });
             }
 
-            if (typeof(token) !== "string") {
+            if (typeof (token) !== "string") {
                 return response.status(400).json({ error: 'Token inválido' });
             }
 
@@ -274,28 +274,28 @@ export default class UserController {
             return response.status(400).json({ error: 'Falha ao deslogar' });
         }
         catch (error) {
-            return response.status(400).json({  error: `${error}`  });
+            return response.status(400).json({ error: `${error}` });
         }
     }
 
 
     public async validateUserPassword(request: Request, response: Response) {
-        
+
         try {
-            
+
             if (!request.headers.authorization) {
                 return response.status(400).json({ error: 'Token não informado' });
             }
-        
+
             const parts = request.headers.authorization?.split(' ');
-        
+
             if (!parts || parts.length < 2) {
                 return response.status(400).json({ error: 'Token inválido' });
             }
-        
+
             let accessToken = null;
-        
-            if(parts[0] === 'Bearer') {
+
+            if (parts[0] === 'Bearer') {
                 accessToken = parts[1];
             }
             else {
@@ -305,7 +305,7 @@ export default class UserController {
             if (!accessToken) {
                 return response.status(400).json({ error: 'Token não informado' });
             }
-            
+
 
             const { password } = request.body;
 
@@ -336,16 +336,16 @@ export default class UserController {
             if (!request.headers.authorization) {
                 return response.status(400).json({ error: 'Token não informado' });
             }
-        
+
             const parts = request.headers.authorization?.split(' ');
-        
+
             if (!parts || parts.length < 2) {
                 return response.status(400).json({ error: 'Token inválido' });
             }
-        
+
             let accessToken = null;
-        
-            if(parts[0] === 'Bearer') {
+
+            if (parts[0] === 'Bearer') {
                 accessToken = parts[1];
             }
             else {
@@ -371,21 +371,21 @@ export default class UserController {
 
     public async getAllKeysFromUser(request: Request, response: Response) {
 
-        try{
+        try {
 
             if (!request.headers.authorization) {
                 return response.status(400).json({ error: 'Token não informado' });
             }
-        
+
             const parts = request.headers.authorization?.split(' ');
-        
+
             if (!parts || parts.length < 2) {
                 return response.status(400).json({ error: 'Token inválido' });
             }
-        
+
             let accessToken = null;
-        
-            if(parts[0] === 'Bearer') {
+
+            if (parts[0] === 'Bearer') {
                 accessToken = parts[1];
             }
             else {
@@ -400,8 +400,141 @@ export default class UserController {
 
             return response.status(200).json(keys);
         }
-        catch(error){
+        catch (error) {
             return response.status(400).json(`${error}`);
+        }
+    }
+
+
+    public async requestUpdateEmail(request: Request, response: Response) {
+        try {
+            const { email } = request.body;
+
+            if (!email) {
+                return response.status(400).json({ error: 'Email não informado' });
+            }
+
+            if (!request.headers.authorization) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+
+            const parts = request.headers.authorization?.split(' ');
+
+            if (!parts || parts.length < 2) {
+                return response.status(400).json({ error: 'Token inválido' });
+            }
+
+            let accessToken = null;
+
+            if (parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
+            const updatedEmail = await this.userService.requestUpdateEmail(email, accessToken);
+
+            if (updatedEmail) {
+                return response.status(200).json( updatedEmail );
+            }
+
+            return response.status(400).json({ error: 'Falha ao atualizar email' });
+
+        } catch (error) {
+            return response.status(400).json(`${error}`);
+        }
+    }
+
+
+    public async requestUpdateEmailRecovery(request: Request, response: Response) {
+        try {
+            const { email_recovery } = request.body;
+
+            if (!email_recovery) {
+                return response.status(400).json({ error: 'Email de recuperação não informado' });
+            }
+
+            if (!request.headers.authorization) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+
+            const parts = request.headers.authorization?.split(' ');
+
+            if (!parts || parts.length < 2) {
+                return response.status(400).json({ error: 'Token inválido' });
+            }
+
+            let accessToken = null;
+
+            if (parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
+            const updatedEmailRecovery = await this.userService.requestUpdateEmailRecovery(email_recovery, accessToken);
+
+            if (updatedEmailRecovery) {
+                return response.status(200).json( updatedEmailRecovery );
+            }
+
+            return response.status(400).json({ error: 'Falha ao atualizar email de recuperação' });
+
+        } catch (error) {
+            return response.status(400).json(`${error}`);
+        }
+    }
+
+
+    public async updateEmail(request: Request, response: Response) {
+        try {
+            
+            const { UpdateEmailToken, IdUser } = request.query;
+
+            console.log(UpdateEmailToken, IdUser);
+            console.log(request.query);
+            console.log(request.params);
+
+            if (!UpdateEmailToken && !IdUser) {
+                return response.status(400).json({ error: 'Tokens não informados' });
+            }
+
+            const updatedEmail = await this.userService.updateEmailByToken(UpdateEmailToken as string, IdUser as string);
+
+            if (!updatedEmail) {
+                return response.status(400).json({ error: 'Falha ao atualizar email' });
+            }
+
+            return response.status(200).send(EmailChangeWithSuccessHtml.message());
+
+        }
+        catch (error) {
+            return response.status(400).json({ error: `${error}` });
+        }
+    }
+
+
+    public async updateEmailRecovery(request: Request, response: Response) {
+        try {
+            const { UpdateEmailRecoveryToken, IdUser } = request.query;
+
+            if (!UpdateEmailRecoveryToken && !IdUser) {
+                return response.status(400).json({ error: 'Tokens não informados' });
+            }
+
+            const updatedEmailRecovery = await this.userService.updateEmailRecoveryByToken(UpdateEmailRecoveryToken as string, IdUser as string);
+
+            if (!updatedEmailRecovery) {
+                return response.status(400).json({ error: 'Falha ao atualizar email de recuperação' });
+            }
+
+            return response.status(200).send(EmailChangeWithSuccessHtml.message());
+
+        }
+        catch (error) {
+            return response.status(400).json({ error: `${error}` });
         }
     }
 }
