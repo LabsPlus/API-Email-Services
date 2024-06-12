@@ -247,4 +247,24 @@ router.get('/getAllKeysFromUser', async (req, res) => {
     await userController.getAllKeysFromUser(req, res);
 });
 
+//updateEmail
+router.post('/requestUpdateEmail', async (req, res) => {
+    await userController.requestUpdateEmail(req, res);
+});
+
+//updateEmailRecovery
+router.post('/requestUpdateEmailRecovery', async (req, res) => {
+    await userController.requestUpdateEmailRecovery(req, res);
+});
+
+//updateEmailGet
+router.get('/updateEmail', async (req, res) => {
+    await userController.updateEmail(req, res);
+});
+
+//updateEmailRecoveryGet
+router.get('/updateEmailRecovery', async (req, res) => {
+    await userController.updateEmailRecovery(req, res);
+});
+
 export default router;
