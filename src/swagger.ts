@@ -6,11 +6,22 @@ const options: swaggerJSDoc.Options = {
         info: {
             title: "Express API with Swagger",
             version: "1.0.0",
-            description:
-                `Esta API é responsável pelo envio de e-mails e é consumida por softwares externos.
-                Utiliza TypeScript, Jest para testes, Express como framework, Nodemailer para o envio de e-mails,
-                Cloud Functions para escalabilidade, RabbitMQ para mensageria e Swagger para documentação.`,
+            description: `Esta API é responsável pelo envio de e-mails e é consumida por softwares externos.
+                          Utiliza TypeScript, Jest para testes, Express como framework, Nodemailer para o envio de e-mails,
+                          Cloud Functions para escalabilidade, RabbitMQ para mensageria e Swagger para documentação.`,
         },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: [{
+            bearerAuth: []
+        }],
     },
     tags: [
         { name: 'User', description: 'Operações relacionadas a usuários' },
