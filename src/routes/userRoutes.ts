@@ -753,7 +753,7 @@ router.get('/isLoggedIn', async (req, res) => {
     await userController.isLoggedIn(req, res);
 });
 
-router.post('/scheduleUserDeletion', async (req, res) => {
+router.get('/scheduleUserDeletion', async (req, res) => {
     await userController.scheduleUserDeletion(req, res);
 });
 
