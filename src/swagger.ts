@@ -12,6 +12,12 @@ const options: swaggerJSDoc.Options = {
                 Cloud Functions para escalabilidade, RabbitMQ para mensageria e Swagger para documentação.`,
         },
     },
+    tags: [
+        { name: 'User', description: 'Operações relacionadas a usuários' },
+        { name: 'E-mail', description: 'Operações relacionadas a e-mails' },
+        { name: 'Chave', description: 'Operações relacionadas a chaves' },
+        { name: 'Fila de Enfileiramento', description: 'Operações relacionadas a fila de enfileiramento' },
+    ],
     apis: ['./src/routes/*.ts'],
 };
 
