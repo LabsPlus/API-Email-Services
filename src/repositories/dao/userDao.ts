@@ -72,20 +72,20 @@ export default class UserDao {
         }
     }
     
-    public async deleteUserByDeletionScheduledAt(date: Date): Promise<string> {
+    public async deleteUserByDeletionScheduledAt(date: Date): Promise<IUser[]> {
         try {
             
             const users = await User.findAll({where: {deletion_scheduled_at: date}});
             
             if (!users) {
-                return 'Nenhum usuário encontrado';
+                throw 'Nenhum usuário encontrado';
             }
 
             users.forEach(async user => {
                 await user.destroy();
             });
 
-            return 'Usuários deletados com sucesso';
+            return users;
         } catch (error) {
             throw new Error(`${error}`);
         }

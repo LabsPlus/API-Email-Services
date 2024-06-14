@@ -16,6 +16,9 @@ import IForgotPassword from "../interfaces/user/forgotPassword";
 import CacheService from "./cacheService";
 import KeyService from "./keyService";
 import { IKey } from "../interfaces/key/keyInterface";
+import { ReactivateProfileMessage } from "../utils/messages/reactivate_profile_message";
+import { DeletedProfileMessage } from "../utils/messages/deleted_profile_message";
+import { StartProcessToExcludeProfileMessage } from "../utils/messages/start_process_to_exclude_profile_message";
 
 export default class UserService {
 
@@ -216,6 +219,10 @@ export default class UserService {
 
             const response = await this.userDao.scheduleUserDeletion(user.id, scheduleDate);
 
+            if( response ) {
+                await this.sendEmailToDeletionRequestReceived(user);
+            }
+
             return response;
 
         } catch (error) {
@@ -228,7 +235,15 @@ export default class UserService {
         try {
 
             const todayDate = new Date();
-            await this.userDao.deleteUserByDeletionScheduledAt(todayDate);
+            const userDeletedList : IUser[] = await this.userDao.deleteUserByDeletionScheduledAt(todayDate);
+
+            for (const user of userDeletedList) {
+                
+                if(user) {
+                    await this.sendEmailToProfileDeleted(user);
+                }
+                
+            }
 
         } catch (error) {
             throw new Error(`${error}`);
@@ -256,6 +271,10 @@ export default class UserService {
             }
 
             const response = await this.userDao.reactivateUser(user.id);
+
+            if( response ) {
+                await this.sendEmailToProfileReactivated(user);
+            }
 
             return response;
         }
@@ -849,6 +868,105 @@ export default class UserService {
             }
 
             return 'Email de recuperação atualizado com sucesso';
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async sendEmailToProfileReactivated(user: IUser): Promise<string> {
+        try {
+
+            if (!user) {
+                throw ('Usuário não informado');
+            }
+
+            if (!user.email) {
+                throw ('Email não informado');
+            }
+
+            const emailData = {
+                from: process.env.SMTP_EMAIL_SENDER as string,
+                to: user.email,
+                subject: 'Solicitação de Exclusão Cancelada',
+                text: ReactivateProfileMessage.reactivateProfileMessage(user.name),
+                html: ReactivateProfileMessage.reactivateProfileMessage(user.name),
+                apiKey: process.env.API_EMAIL_KEY as string,
+            } as Email;
+
+            const emailSent = await this.emailService.sendEmail(emailData);
+
+            if (!emailSent) {
+                throw ('Erro ao enviar email');
+            }
+
+            return emailSent;
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async sendEmailToProfileDeleted(user: IUser): Promise<string> {
+        try {
+
+            if (!user) {
+                throw ('Usuário não informado');
+            }
+
+            if (!user.email) {
+                throw ('Email não informado');
+            }
+
+            const emailData = {
+                from: process.env.SMTP_EMAIL_SENDER as string,
+                to: user.email,
+                subject: 'Perfil Excluído com Sucesso',
+                text: DeletedProfileMessage.deletedProfileMessage(user.name),
+                html: DeletedProfileMessage.deletedProfileMessage(user.name),
+                apiKey: process.env.API_EMAIL_KEY as string,
+            } as Email;
+
+            const emailSent = await this.emailService.sendEmail(emailData);
+
+            if (!emailSent) {
+                throw ('Erro ao enviar email');
+            }
+
+            return emailSent;
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async sendEmailToDeletionRequestReceived(user: IUser): Promise<string> {
+        try {
+
+            if (!user) {
+                throw ('Usuário não informado');
+            }
+
+            if (!user.email) {
+                throw ('Email não informado');
+            }
+
+            const emailData = {
+                from: process.env.SMTP_EMAIL_SENDER as string,
+                to: user.email,
+                subject: 'Solicitação de Exclusão Recebida',
+                text: StartProcessToExcludeProfileMessage.startProcessToExcludeProfileMessage(user.name),
+                html: StartProcessToExcludeProfileMessage.startProcessToExcludeProfileMessage(user.name),
+                apiKey: process.env.API_EMAIL_KEY as string,
+            } as Email;
+
+            const emailSent = await this.emailService.sendEmail(emailData);
+
+            if (!emailSent) {
+                throw ('Erro ao enviar email');
+            }
+
+            return emailSent;
 
         } catch (error) {
             throw new Error(`${error}`);
