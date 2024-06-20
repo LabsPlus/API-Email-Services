@@ -19,6 +19,7 @@ import { IKey } from "../interfaces/key/keyInterface";
 import { ReactivateProfileMessage } from "../utils/messages/reactivate_profile_message";
 import { DeletedProfileMessage } from "../utils/messages/deleted_profile_message";
 import { StartProcessToExcludeProfileMessage } from "../utils/messages/start_process_to_exclude_profile_message";
+import { RememberPasswordChangeMessage } from "../utils/messages/remember_password_change_message";
 
 export default class UserService {
 
@@ -166,7 +167,7 @@ export default class UserService {
                 throw ('Token não informado');
             }
 
-            const id = await this.cacheService.getCache(token);
+            const id : number = parseInt(await this.cacheService.getCache(token));
 
             if (!id) {
                 throw ('Usuario não encontrado');
@@ -178,7 +179,11 @@ export default class UserService {
                 userData.password = hashedPassword;
             }
 
-            const user = await this.userDao.updateuser(parseInt(id), userData);
+            if(userData.password !== null ){
+                await this.setUserPasswordUpdatedAt(id, new Date());
+            }
+
+            const user = await this.userDao.updateuser(id, userData);
             return user;
         } catch (error) {
             throw new Error(`Erro ao atualizar user: ${error}`);
@@ -219,7 +224,7 @@ export default class UserService {
 
             const response = await this.userDao.scheduleUserDeletion(user.id, scheduleDate);
 
-            if( response ) {
+            if (response) {
                 await this.sendEmailToDeletionRequestReceived(user);
             }
 
@@ -235,14 +240,14 @@ export default class UserService {
         try {
 
             const todayDate = new Date();
-            const userDeletedList : IUser[] = await this.userDao.deleteUserByDeletionScheduledAt(todayDate);
+            const userDeletedList: IUser[] = await this.userDao.deleteUserByDeletionScheduledAt(todayDate);
 
             for (const user of userDeletedList) {
-                
-                if(user) {
+
+                if (user) {
                     await this.sendEmailToProfileDeleted(user);
                 }
-                
+
             }
 
         } catch (error) {
@@ -272,7 +277,7 @@ export default class UserService {
 
             const response = await this.userDao.reactivateUser(user.id);
 
-            if( response ) {
+            if (response) {
                 await this.sendEmailToProfileReactivated(user);
             }
 
@@ -486,6 +491,8 @@ export default class UserService {
             if (!userUpdated) {
                 throw ('Erro ao alterar senha');
             }
+
+            await this.setUserPasswordUpdatedAt(user.id, new Date());
 
             return 'Senha alterada com sucesso';
 
@@ -765,7 +772,7 @@ export default class UserService {
                 throw ('Token de Email inválido');
             }
 
-            if(!decodedId) {
+            if (!decodedId) {
                 throw ('Token para ID é inválido');
             }
 
@@ -812,7 +819,7 @@ export default class UserService {
         }
     }
 
-    
+
     public async updateEmailRecoveryByToken(emailRecoveryToken: string, userIdToken: string): Promise<string> {
 
         try {
@@ -828,7 +835,7 @@ export default class UserService {
                 throw ('Token de Email de recuperação inválido');
             }
 
-            if(!decodedId) {
+            if (!decodedId) {
                 throw ('Token para ID é inválido');
             }
 
@@ -972,4 +979,176 @@ export default class UserService {
             throw new Error(`${error}`);
         }
     }
+
+    public async setFlagValueRememberPasswordChange(accessToken: string, remember_password_change_is_enable: boolean): Promise<void> {
+
+        try {
+
+            const id : number = await this.getUserIdByAccessToken(accessToken);
+
+            await this.userDao.setFlagValueRememberPasswordChange(id, remember_password_change_is_enable);
+
+
+            let lastPasswordUpdateData : Date = await this.getLastUserPasswordUpdateDate(id);
+
+            if (!lastPasswordUpdateData) {
+                lastPasswordUpdateData = await this.getLastUserUpdateDate(id);
+            }
+
+            if(!lastPasswordUpdateData){
+                lastPasswordUpdateData = new Date();
+            }
+
+            if (remember_password_change_is_enable) {
+                await this.setRememberPasswordChangeAt(id, lastPasswordUpdateData);
+            }
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async isFlagRememberPasswordChangeEnable(accessToken: string): Promise<boolean> {
+        try {
+
+            const id : number = await this.getUserIdByAccessToken(accessToken);
+
+            const isFlagEnable: boolean = await this.userDao.isFlagRememberPasswordChangeEnable(id);
+
+            return isFlagEnable;
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    private async setUserPasswordUpdatedAt(id: number, password_updated_at: Date): Promise<string> {
+        try {
+
+            const user = await this.userDao.setUserPasswordUpdatedAt(id, password_updated_at);
+
+            if (!user) {
+                return 'Erro ao definir data de atualização de senha';
+            }
+
+            return 'Data de atualização de senha definida com sucesso';
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    private async getLastUserPasswordUpdateDate(id: number): Promise<Date> {
+        try {
+
+            const user = await this.userDao.getuserById(id);
+
+            if (!user) {
+                throw ('Usuário não encontrado');
+            }
+
+            if (!user.password_updated_at) {
+                throw ('Data de atualização de senha não definida');
+            }
+
+            return user.password_updated_at as Date;
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    private async setRememberPasswordChangeAt(id: number, remember_password_change_at: Date): Promise<void> {
+        try {
+
+            const rememberPasswordChangeDate = await this.calculatePasswordExpirationDate(remember_password_change_at);
+
+            await this.userDao.setUserRememberPasswordChangeAt(id, rememberPasswordChangeDate);
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    private async calculatePasswordExpirationDate(password_updated_at: Date): Promise<Date> {
+
+        try {
+            const rememberPasswordChangeDate = new Date(password_updated_at);
+            const days = 60;
+            rememberPasswordChangeDate.setDate(rememberPasswordChangeDate.getDate() + days);
+            return rememberPasswordChangeDate;
+        }
+        catch (error) {
+            throw new Error(`${error}`);
+        }
+
+    }
+
+    private async getLastUserUpdateDate(id: number): Promise<Date> {
+        try {
+
+            const user = await this.userDao.getuserById(id);
+
+            if (!user) {
+                throw ('Usuário não encontrado');
+            }
+
+            if (!user.updated_at) {
+                throw ('Data de atualização não definida');
+            }
+
+            return user.updated_at as Date;
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+
+    public async getUserIdByAccessToken(accessToken: string): Promise<number> {
+        try {
+
+            if (!accessToken) {
+                throw ('Token não informado');
+            }
+
+            const id = await this.cacheService.getCache(accessToken);
+
+            if (!id) {
+                throw ('Usuario não encontrado');
+            }
+
+            return parseInt(id);
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    }
+
+    public async sendRememberPasswordChangeEmail(): Promise<void> {
+        try {
+
+            const todayDate = new Date();
+
+            const users = await this.userDao.getUsersRememberPasswordChangeIsEnable(todayDate);
+
+            for (const user of users) {
+
+                if (user) {
+                    
+                    this.emailService.sendEmail({
+                        from: process.env.SMTP_EMAIL_SENDER as string,
+                        to: user.email,
+                        subject: 'Alteração de Senha Obrigatória',
+                        text: RememberPasswordChangeMessage.rememberPasswordChangeMessage(user.name),
+                        html: RememberPasswordChangeMessage.rememberPasswordChangeMessage(user.name),
+                        apiKey: process.env.API_EMAIL_KEY as string,
+                    });
+                }
+
+            }
+
+        } catch (error) {
+            throw new Error(`${error}`);
+        }
+    };
 }
