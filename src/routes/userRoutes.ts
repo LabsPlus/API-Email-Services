@@ -1540,4 +1540,161 @@ router.get('/updateEmailRecovery', async (req, res) => {
     await userController.updateEmailRecovery(req, res);
 });
 
+
+/**
+ * @swagger
+ * /api/user/setFlaggValueRememberPasswordChange:
+ *   put:
+ *     summary: Define o valor da flag de lembrar mudança de senha.
+ *     description: Define se a funcionalidade de lembrar a mudança de senha está habilitada para o usuário.
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         description: Token de acesso JWT no formato Bearer.
+ *         schema:
+ *           type: string
+ *           example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Indlc2xleS51bGlzc2VzQGxhYnNpZi5jb20uYnIiLCJpYXQiOjE3MTgzMTQ5NjIsImV4cCI6MTcxODMyMjE2Mn0.XxRSES4uOHxvGEiqQm_A8jKl5F3QwnE6jMtjHnG3cJc"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               remember_password_change_is_enable:
+ *                 type: boolean
+ *                 description: Flag que indica se a funcionalidade de lembrar a mudança de senha está habilitada.
+ *                 example: true
+ *     responses:
+ *       '200':
+ *         description: Flag atualizada com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Flag atualizada com sucesso'
+ *       '400':
+ *         description: Erro na requisição.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     flagNaoInformada:
+ *                       summary: Flag não informada
+ *                       value: 'Flag não informada'
+ *       '401':
+ *         description: Erro de autorização.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     tokenNaoInformado:
+ *                       summary: Token não informado
+ *                       value: 'Token não informado'
+ *                     tokenInvalido:
+ *                       summary: Token inválido
+ *                       value: 'Token inválido'
+ *       '500':
+ *         description: Erro interno do servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 'Internal Server Error'
+ */
+router.post('/setFlagValueRememberPasswordChange', async (req, res) => {
+    await userController.setFlagValueRememberPasswordChange(req, res);
+});
+
+/**
+ * @swagger
+ * /api/user/isFlaggRememberPasswordChangeEnable:
+ *   get:
+ *     summary: Verifica se a flag de lembrar mudança de senha está habilitada.
+ *     description: Verifica se a funcionalidade de lembrar a mudança de senha está habilitada para o usuário.
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         description: Token de acesso JWT no formato Bearer.
+ *         schema:
+ *           type: string
+ *           example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Indlc2xleS51bGlzc2VzQGxhYnNpZi5jb20uYnIiLCJpYXQiOjE3MTgzMTQ5NjIsImV4cCI6MTcxODMyMjE2Mn0.XxRSES4uOHxvGEiqQm_A8jKl5F3QwnE6jMtjHnG3cJc"
+ *     responses:
+ *       '200':
+ *         description: Indicação se a flag está habilitada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 isFlaggEnable:
+ *                   type: boolean
+ *                   description: Indica se a flag de lembrar mudança de senha está habilitada.
+ *                   example: true
+ *       '400':
+ *         description: Erro na requisição.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     erroGenerico:
+ *                       summary: Erro genérico
+ *                       value: 'Erro genérico'
+ *       '401':
+ *         description: Erro de autorização.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     tokenNaoInformado:
+ *                       summary: Token não informado
+ *                       value: 'Token não informado'
+ *                     tokenInvalido:
+ *                       summary: Token inválido
+ *                       value: 'Token inválido'
+ *       '500':
+ *         description: Erro interno do servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 'Internal Server Error'
+ */
+router.get('/isFlagRememberPasswordChangeEnable', async (req, res) => {
+    await userController.isFlagRememberPasswordChangeEnable(req, res);
+});
+
 export default router;
