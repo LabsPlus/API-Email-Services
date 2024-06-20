@@ -13,4 +13,7 @@ export interface IUser {
     profile_photo?: string;
     created_at?: Date;
     updated_at?: Date;
+    password_updated_at?: Date;
+    remember_password_change_at?: Date;
+    remember_password_change_is_enable?: boolean;
 }
