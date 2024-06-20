@@ -1543,7 +1543,7 @@ router.get('/updateEmailRecovery', async (req, res) => {
 
 /**
  * @swagger
- * /api/user/setFlaggValueRememberPasswordChange:
+ * /api/user/setFlagValueRememberPasswordChange:
  *   put:
  *     summary: Define o valor da flag de lembrar mudança de senha.
  *     description: Define se a funcionalidade de lembrar a mudança de senha está habilitada para o usuário.
@@ -1626,7 +1626,7 @@ router.post('/setFlagValueRememberPasswordChange', async (req, res) => {
 
 /**
  * @swagger
- * /api/user/isFlaggRememberPasswordChangeEnable:
+ * /api/user/isFlagRememberPasswordChangeEnable:
  *   get:
  *     summary: Verifica se a flag de lembrar mudança de senha está habilitada.
  *     description: Verifica se a funcionalidade de lembrar a mudança de senha está habilitada para o usuário.
@@ -1649,7 +1649,7 @@ router.post('/setFlagValueRememberPasswordChange', async (req, res) => {
  *             schema:
  *               type: object
  *               properties:
- *                 isFlaggEnable:
+ *                 isFlagEnable:
  *                   type: boolean
  *                   description: Indica se a flag de lembrar mudança de senha está habilitada.
  *                   example: true

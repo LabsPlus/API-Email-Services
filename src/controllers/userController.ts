@@ -595,9 +595,9 @@ export default class UserController {
                 accessToken = parts[1];
             }
 
-            const isFlaggEnable: boolean = await this.userService.isFlagRememberPasswordChangeEnable(accessToken);
+            const isFlagEnable: boolean = await this.userService.isFlagRememberPasswordChangeEnable(accessToken);
 
-            return response.status(200).json({ isFlaggEnable: isFlaggEnable });
+            return response.status(200).json({ isFlagEnable: isFlagEnable });
         } catch (error) {
             return response.status(400).json({ error: `${error}` });
         }
