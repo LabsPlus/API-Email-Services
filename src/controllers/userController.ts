@@ -210,7 +210,7 @@ export default class UserController {
             return response.status(401).json({ error: 'Falha ao alterar senha' });
         }
         catch (error) {
-            return response.status(500).json({ error: "Internal Server Error" });
+            return response.status(500).json({ error: `${error}`});
         }
     }
 
@@ -436,7 +436,7 @@ export default class UserController {
             const updatedEmail = await this.userService.requestUpdateEmail(email, accessToken);
 
             if (updatedEmail) {
-                return response.status(200).json( updatedEmail );
+                return response.status(200).json(updatedEmail);
             }
 
             return response.status(400).json({ error: 'Falha ao atualizar email' });
@@ -477,7 +477,7 @@ export default class UserController {
             const updatedEmailRecovery = await this.userService.requestUpdateEmailRecovery(email_recovery, accessToken);
 
             if (updatedEmailRecovery) {
-                return response.status(200).json( updatedEmailRecovery );
+                return response.status(200).json(updatedEmailRecovery);
             }
 
             return response.status(400).json({ error: 'Falha ao atualizar email de recuperação' });
@@ -490,12 +490,8 @@ export default class UserController {
 
     public async updateEmail(request: Request, response: Response) {
         try {
-            
-            const { UpdateEmailToken, IdUser } = request.query;
 
-            console.log(UpdateEmailToken, IdUser);
-            console.log(request.query);
-            console.log(request.params);
+            const { UpdateEmailToken, IdUser } = request.query;
 
             if (!UpdateEmailToken && !IdUser) {
                 return response.status(400).json({ error: 'Tokens não informados' });
@@ -534,6 +530,75 @@ export default class UserController {
 
         }
         catch (error) {
+            return response.status(400).json({ error: `${error}` });
+        }
+    }
+
+    public async setFlagValueRememberPasswordChange(request: Request, response: Response) {
+
+        try {
+
+            if (!request.headers.authorization) {
+                return response.status(401).json({ error: 'Token não informado' });
+            }
+
+            const parts = request.headers.authorization?.split(' ');
+
+            if (!parts || parts.length < 2) {
+                return response.status(401).json({ error: 'Token inválido' });
+            }
+
+            let accessToken = null;
+
+            if (parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
+            const { remember_password_change_is_enable } = request.body;
+
+            if (remember_password_change_is_enable === undefined || remember_password_change_is_enable === null) {
+                return response.status(400).json({ error: 'Flag não informada' });
+            }
+
+            await this.userService.setFlagValueRememberPasswordChange(accessToken, remember_password_change_is_enable);
+
+            return response.status(200).json({ message: 'Flag atualizada com sucesso' });
+        }
+        catch (error) {
+            return response.status(400).json({ error: `${error}` });
+        }
+    }
+
+    public async isFlagRememberPasswordChangeEnable(request: Request, response: Response) {
+
+        try {
+
+            if (!request.headers.authorization) {
+                return response.status(401).json({ error: 'Token não informado' });
+            }
+
+            const parts = request.headers.authorization?.split(' ');
+
+            if (!parts || parts.length < 2) {
+                return response.status(401).json({ error: 'Token inválido' });
+            }
+
+            let accessToken = null;
+
+            if (parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
+            const isFlagEnable: boolean = await this.userService.isFlagRememberPasswordChangeEnable(accessToken);
+
+            return response.status(200).json({ isFlagEnable: isFlagEnable });
+        } catch (error) {
             return response.status(400).json({ error: `${error}` });
         }
     }

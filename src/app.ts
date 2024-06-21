@@ -58,14 +58,20 @@ database.authenticate().then(() => {
       return setupRoutes();
     });
 
-    //vamos criar um trabalho que será executado todo dias as 00:00
     const job = new CronJob('00 00 00 * * *', async () => {
       console.log('Executando a rotina de deleção de usuários agendados');
       await userService.deleteUserByDeletionScheduledAt();
     });
 
-    // Iniciar a execução da função consumeEmailQueue em intervalos regulares (aqui a cada 1 minuto)
-    const emailQueueInstance = new EnqueueService(); // Substitua YourEmailQueueClass pela sua classe real
+    const jobSendEmails = new CronJob('12 00 00 * * *', async () => {
+      console.log('Executando a rotina de envio de emails de solicitação de mundaça de senha');
+      await userService.sendRememberPasswordChangeEmail();
+    });
+
+    job.start();
+    jobSendEmails.start();
+
+    const emailQueueInstance = new EnqueueService(); 
     setInterval(() => {
       emailQueueInstance.consumeEmailQueue().catch(error => console.error(error));
     }, queueJobInterval); // 30000 milissegundos = 30 segundos

@@ -3,6 +3,7 @@ import { database } from "../data-source";
 import { IUser } from "../interfaces/user/userInterface";
 
 class User extends Model implements IUser{
+
   public id!: number;
   public name!: string;
   public company_name!: string;
@@ -16,7 +17,9 @@ class User extends Model implements IUser{
   public reset_password_expires!: Date;
   public deletion_requested_at!: Date;
   public deletion_scheduled_at!: Date;
-
+  public password_updated_at?: Date;
+  public remember_password_change_at?: Date;
+  public remember_password_change_is_enable?: boolean;
 }
 
 User.init(
@@ -85,6 +88,18 @@ User.init(
     },
     deletion_scheduled_at: {
       type: DataTypes.DATE,
+      allowNull: true,
+    },
+    password_updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    remember_password_change_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    remember_password_change_is_enable: {
+      type: DataTypes.BOOLEAN,
       allowNull: true,
     },
   },
