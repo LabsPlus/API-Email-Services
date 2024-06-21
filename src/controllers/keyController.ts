@@ -40,7 +40,7 @@ export default class KeyController {
         try {
             const id = parseInt(req.params.id);
             const keyData: Partial<IKey> = req.body;
-            const key = await this.keyService.updateKey(id, keyData);
+            const key = await this.keyService.updateKey(keyData.id as number, keyData);
             if (!key) {
                 return res.status(404).json({ message: 'Chave não encontrada' });
             }
@@ -77,6 +77,41 @@ export default class KeyController {
             return res.status(200).json({ exists });
         } catch (error) {
             return res.status(400).json({ message: (error as Error).message });
+        }
+    }
+
+
+    public async toggleKeyStatus(request: Request, response: Response) {
+        try {
+
+            if (!request.headers.authorization) {
+                return response.status(401).json({ error: 'Token não informado' });
+            }
+
+            const parts = request.headers.authorization?.split(' ');
+
+            if (!parts || parts.length < 2) {
+                return response.status(401).json({ error: 'Token inválido' });
+            }
+
+            let accessToken = null;
+
+            if (parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
+            const { id, is_active } = request.body;
+
+
+            const message = await this.keyService.toggleKeyStatus(id, is_active, accessToken);
+
+            return response.status(200).json({ message });
+            
+        } catch (error) {
+            return response.status(400).json({ error });
         }
     }
 }

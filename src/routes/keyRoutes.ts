@@ -88,7 +88,7 @@ router.get('/:id', async (req, res) => {
  *       '400':
  *         description: Erro ao atualizar chave.
  */
-router.put('/:id', async (req, res) => {
+router.put('/updateApiKey', async (req, res) => {
     await keyController.updateKey(req, res);
 });
 
@@ -115,4 +115,8 @@ router.delete('/:id', async (req, res) => {
     await keyController.deleteKey(req, res);
 });
 
+//toggleKeyStatus
+router.post('/toggleKeyStatus', async (req, res) => {
+    await keyController.toggleKeyStatus(req, res);
+});
 export default router;
