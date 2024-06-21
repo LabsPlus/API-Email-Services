@@ -1,14 +1,16 @@
 import { DataTypes, Model } from "sequelize";
 import { database } from "../data-source";
 import User from "./user_model";
+import { IKey } from "../interfaces/key/keyInterface";
 
-class Key extends Model {
+class Key extends Model implements IKey{
   public id!: number;
   public name!: string;
   public value!: string;
   public user_id!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public is_active!: boolean;
 }
 
 Key.init(
@@ -32,6 +34,11 @@ Key.init(
       validate: {
         len: [3, 120],
       },
+    },
+    is_active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      allowNull: false,
     },
   },
   {
