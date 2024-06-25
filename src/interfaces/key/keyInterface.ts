@@ -5,4 +5,5 @@ export interface IKey {
     user_id: number;
     createdAt?: Date;
     updatedAt?: Date;
+    is_active: boolean;
 }

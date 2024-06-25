@@ -36,8 +36,8 @@ export default class KeyDao {
             if (!key) {
                 return null;
             }
-            await key.update(keyData);
-            return key;
+            const updatedKey = await key.update(keyData);
+            return updatedKey;
         } catch (error) {
             throw new Error(`Erro ao atualizar chave: ${error}`);
         }
@@ -90,6 +90,25 @@ export default class KeyDao {
         }
         catch (error) {
             throw new Error(`Erro ao buscar chaves por ID do usuário: ${error}`);
+        }
+    }
+
+
+    public async toggleKeyStatus(id: number, is_active: boolean): Promise<string> {
+        try {
+            
+            const key = await Key.findByPk(id);
+            
+            if (!key) {
+                return ('Chave não encontrada');
+            }
+
+            const response = await key.update({ is_active });
+            
+            return response as any;
+
+        } catch (error) {
+            throw new Error(`Erro ao alterar status da chave: ${error}`);
         }
     }
 

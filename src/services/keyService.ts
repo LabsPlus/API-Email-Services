@@ -1,13 +1,17 @@
 import KeyDao from "../repositories/dao/keyDao";
 import { IKey } from "../interfaces/key/keyInterface";
 import bycript from 'bcrypt';
+import UserService from "./userService";
+import CacheService from "./cacheService";
 
 export default class KeyService {
 
     private keyDao: KeyDao;
+    private cacheService: CacheService;
     
     constructor() {
         this.keyDao = new KeyDao();
+        this.cacheService = new CacheService();
     }
 
     public async generateUniqueKey(length: number): Promise<string> {
@@ -111,4 +115,63 @@ export default class KeyService {
         }
     }
 
+
+    public async toggleKeyStatus(id: number, is_active: boolean, accessToken: string): Promise<string> {
+
+        try {
+
+            if ( !accessToken ) {
+                throw 'Token de acesso não informado';
+            }
+
+            const isAuthorized = await this.isAuthorized(accessToken);
+
+            if ( !isAuthorized ) {
+                throw 'Você não tem permissão para realizar esta ação';
+            }
+
+            const key = await this.getKeyById(id);
+
+            if (!key) {
+                throw ('Chave não encontrada');
+            }
+
+            const response = this.keyDao.toggleKeyStatus(key.id, is_active);
+
+            if ( !response ) {
+                throw 'Falha ao ativar/desativar chave';
+            }
+
+            if ( is_active === true ) {
+                return 'Chave ativada com sucesso';
+            }
+
+            return 'Chave desativada com sucesso';
+        }
+        catch (error) {
+            
+            if ( is_active === true ) {
+                throw (`Erro ao ativar chave: ${error}`);
+            }
+            else {
+                throw (`Erro ao desativar chave: ${error}`);
+            }
+        }
+    }
+
+    private async isAuthorized(accessToken: string): Promise<boolean> {
+
+        try {
+            const session = await this.cacheService.getCache(accessToken);
+
+            if ( !session ) {
+                return false;
+            }
+
+            return true;
+        }
+        catch (error) {
+            throw new Error(`Erro ao verificar autorização`);
+        }
+    }
 }
