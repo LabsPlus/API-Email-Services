@@ -114,4 +114,44 @@ export default class KeyController {
             return response.status(400).json({ error });
         }
     }
+
+    public async generateKey(request: Request, response: Response) {
+        
+        try {
+            if (!request.headers.authorization) {
+                return response.status(401).json({ error: 'Token não informado' });
+            }
+    
+            const parts = request.headers.authorization?.split(' ');
+    
+            if (!parts || parts.length < 2) {
+                return response.status(401).json({ error: 'Token inválido' });
+            }
+    
+            let accessToken = null;
+    
+            if (parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+    
+            const  req = request.body;
+
+            const key = {
+                user_id: req.key.user_id,
+                name: req.key.name
+            } as IKey;
+
+
+            const message = await this.keyService.generateKey(accessToken, key);
+    
+            response.status(200).json({ message });
+        }
+        catch (error) {
+            response.status(400).json({ error: `${error}` });
+        }
+
+    }
 }

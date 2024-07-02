@@ -24,7 +24,7 @@ Key.init(
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: [3, 45],
+        len: [2, 45],
       },
     },
     value: {
