@@ -4,7 +4,7 @@ import bycript from 'bcrypt';
 
 export default class KeyDao {
 
-    public async createKey(keyData: IKey): Promise<IKey> {
+    public async createKey(keyData: IKey): Promise<string> {
 
         try {
 
@@ -14,7 +14,7 @@ export default class KeyDao {
                 user_id: keyData.user_id,
             });
 
-            return key;
+            return 'Chave criada com sucesso';
 
         } catch (error) {
             throw new Error(`Erro ao criar chave: ${error}`);

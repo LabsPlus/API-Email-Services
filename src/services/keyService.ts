@@ -8,7 +8,7 @@ export default class KeyService {
 
     private keyDao: KeyDao;
     private cacheService: CacheService;
-    
+
     constructor() {
         this.keyDao = new KeyDao();
         this.cacheService = new CacheService();
@@ -45,7 +45,7 @@ export default class KeyService {
 
     }
 
-    public async createKey(keyData: IKey): Promise<IKey> {
+    public async createKey(keyData: IKey): Promise<string> {
 
         try {
 
@@ -58,13 +58,54 @@ export default class KeyService {
             }
 
             else {
-                
+
                 keyData.value = await this.encriptKey(keyData.value);
 
                 const key = await this.keyDao.createKey(keyData);
 
                 return key;
             }
+        } catch (error) {
+            throw new Error(`Erro ao criar chave: ${error}`);
+        }
+    }
+
+
+    public async generateKey(accessToken:string, keyData: IKey): Promise<string> {
+
+        try {
+
+            if (!accessToken) {
+                throw new Error('Token de acesso não informado');
+            }
+
+            const isAuthorized = await this.isAuthorized(accessToken);
+
+            if (!isAuthorized) {
+                throw new Error('Você não tem permissão para realizar esta ação');
+            }
+
+            if (!keyData.name) {
+                throw new Error( 'Nome da chave não informado');
+            }
+
+            if (!keyData.user_id) {
+                throw new Error('ID do usuário não informado');
+            }
+            keyData.value = await this.generateUniqueKey(16);
+
+            if (await this.keyExists(keyData.value)) {
+                throw new Error('Falha ao gerar chave única');
+            }
+
+            const key = await this.keyDao.createKey(keyData);
+
+            if (!key) {
+                throw new Error('Falha ao criar chave');
+            }
+
+            return key as string;
+
         } catch (error) {
             throw new Error(`Erro ao criar chave: ${error}`);
         }
@@ -120,13 +161,13 @@ export default class KeyService {
 
         try {
 
-            if ( !accessToken ) {
+            if (!accessToken) {
                 throw 'Token de acesso não informado';
             }
 
             const isAuthorized = await this.isAuthorized(accessToken);
 
-            if ( !isAuthorized ) {
+            if (!isAuthorized) {
                 throw 'Você não tem permissão para realizar esta ação';
             }
 
@@ -138,19 +179,19 @@ export default class KeyService {
 
             const response = this.keyDao.toggleKeyStatus(key.id, is_active);
 
-            if ( !response ) {
+            if (!response) {
                 throw 'Falha ao ativar/desativar chave';
             }
 
-            if ( is_active === true ) {
+            if (is_active === true) {
                 return 'Chave ativada com sucesso';
             }
 
             return 'Chave desativada com sucesso';
         }
         catch (error) {
-            
-            if ( is_active === true ) {
+
+            if (is_active === true) {
                 throw (`Erro ao ativar chave: ${error}`);
             }
             else {
@@ -164,7 +205,7 @@ export default class KeyService {
         try {
             const session = await this.cacheService.getCache(accessToken);
 
-            if ( !session ) {
+            if (!session) {
                 return false;
             }
 

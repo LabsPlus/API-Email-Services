@@ -115,8 +115,13 @@ router.delete('/:id', async (req, res) => {
     await keyController.deleteKey(req, res);
 });
 
-//toggleKeyStatus
+
 router.post('/toggleKeyStatus', async (req, res) => {
     await keyController.toggleKeyStatus(req, res);
 });
+
+router.post('/generateKey', async (req, res) => {
+    await keyController.generateKey(req, res);
+});
+
 export default router;
