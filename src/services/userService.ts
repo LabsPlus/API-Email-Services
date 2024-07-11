@@ -308,6 +308,31 @@ export default class UserService {
         return token;
     }
 
+    public async generateRefreshToken(accessToken: string): Promise<string> {
+
+        if (!accessToken) {
+            throw ('Token não informado');
+        }
+
+        const id = await this.cacheService.getCache(accessToken);
+
+        if (!id) {
+            throw ('Usuario não encontrado');
+        }
+
+        const user = await this.userDao.getuserById(parseInt(id));
+
+        if (!user) {
+            throw ('Usuário não encontrado');
+        }
+
+        const refreshToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET as string, { expiresIn: '7d' });
+
+        this.cacheService.setCache(refreshToken, user.id.toString());
+
+        return refreshToken;
+    }
+
     public async login(email: string, password: string): Promise<string> {
         try {
 
@@ -1134,7 +1159,7 @@ export default class UserService {
             for (const user of users) {
 
                 if (user) {
-                    
+
                     this.emailService.sendEmail({
                         from: process.env.SMTP_EMAIL_SENDER as string,
                         to: user.email,

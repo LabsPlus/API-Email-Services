@@ -1697,4 +1697,9 @@ router.get('/isFlagRememberPasswordChangeEnable', async (req, res) => {
     await userController.isFlagRememberPasswordChangeEnable(req, res);
 });
 
+
+router.post('/refreshToken', async (req, res) => {
+    await userController.generateRefreshToken(req, res);
+});
+
 export default router;
