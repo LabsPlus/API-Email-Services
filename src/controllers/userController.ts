@@ -50,6 +50,43 @@ export default class UserController {
         }
     }
 
+    public async generateRefreshToken(request: Request, response: Response) {
+        try {
+            if (!request.headers.authorization) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+
+            const parts = request.headers.authorization?.split(' ');
+
+            if (!parts || parts.length < 2) {
+                return response.status(400).json({ error: 'Token inválido' });
+            }
+
+            let accessToken = null;
+
+            if (parts[0] === 'Bearer') {
+                accessToken = parts[1];
+            }
+            else {
+                accessToken = parts[1];
+            }
+
+            if (!accessToken) {
+                return response.status(400).json({ error: 'Token não informado' });
+            }
+
+            const refreshToken = await this.userService.generateRefreshToken(accessToken);
+
+            if (!refreshToken) {
+                return response.status(400).json({ error: 'Falha ao gerar refresh token' });
+            }
+
+            return response.status(200).json({ refreshToken: refreshToken });
+
+        } catch (error) {
+            return response.status(400).json(`${error}`);
+        }
+    }
     public async updateUser(request: Request, response: Response) {
         try {
 
