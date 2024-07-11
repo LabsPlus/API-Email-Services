@@ -63,10 +63,21 @@ database.authenticate().then(() => {
       await userService.deleteUserByDeletionScheduledAt();
     });
 
-    const jobSendEmails = new CronJob('12 00 00 * * *', async () => {
+    // const jobSendEmails = new CronJob('12 00 00 * * *', async () => {
+    //   console.log('Executando a rotina de envio de emails de solicitação de mundaça de senha');
+    //   await userService.sendRememberPasswordChangeEmail();
+    // });
+
+    //vamos setar o job para rodar a cada 1 minuto
+    const jobSendEmails = new CronJob('00 00 00 * * *', async () => {
       console.log('Executando a rotina de envio de emails de solicitação de mundaça de senha');
       await userService.sendRememberPasswordChangeEmail();
     });
+
+    setInterval(async () => {
+      console.log('Executando a rotina de envio de emails de solicitação de mundaça de senha');
+      await userService.sendRememberPasswordChangeEmail().catch(error => console.error(error));
+    }, queueJobInterval);
 
     job.start();
     jobSendEmails.start();

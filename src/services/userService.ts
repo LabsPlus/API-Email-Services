@@ -999,8 +999,13 @@ export default class UserService {
                 lastPasswordUpdateData = new Date();
             }
 
+            const currentDate = new Date();
+            const pastDate = new Date(currentDate);
+            pastDate.setDate(currentDate.getDate() - 61);
+
+            console.log('lastPasswordUpdateData', lastPasswordUpdateData);
             if (remember_password_change_is_enable) {
-                await this.setRememberPasswordChangeAt(id, lastPasswordUpdateData);
+                await this.setRememberPasswordChangeAt(id, pastDate);
             }
 
         } catch (error) {
@@ -1135,6 +1140,7 @@ export default class UserService {
 
                 if (user) {
                     
+                    console.log('user', user);
                     this.emailService.sendEmail({
                         from: process.env.SMTP_EMAIL_SENDER as string,
                         to: user.email,

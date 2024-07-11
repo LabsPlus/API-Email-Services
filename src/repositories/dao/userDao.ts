@@ -1,5 +1,6 @@
 import User from '../../model/user_model';
 import { IUser } from '../../interfaces/user/userInterface';
+import { Op } from 'sequelize';
 
 export default class UserDao {
     public async createuser(userData: IUser): Promise<IUser> {
@@ -235,7 +236,13 @@ export default class UserDao {
     public async getUsersRememberPasswordChangeIsEnable(date: Date): Promise<IUser[]> {
         try {
 
-            const users = await User.findAll({ where: { remember_password_change_is_enable: true, remember_password_change_at: date } });
+            //pegar todos os usuários que tem a flag de mudança de senha habilitada e a data de mudança de senha é igual a data atual ou menor
+            
+            const users = await User.findAll({ where: { 
+                    remember_password_change_is_enable: true,
+                    remember_password_change_at: {
+                        [Op.lte]: date // Usa o operador "menor ou igual a" do Sequelize
+                    }} });
 
             if (!users) {
                 throw new Error('Nenhum usuário encontrado');
