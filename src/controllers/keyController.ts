@@ -38,9 +38,11 @@ export default class KeyController {
 
     public async updateKey(req: Request, res: Response) {
         try {
-            const id = parseInt(req.params.id);
-            const keyData: Partial<IKey> = req.body;
-            const key = await this.keyService.updateKey(keyData.id as number, keyData);
+
+            const id = parseInt(req.body.key.id);
+            const keyData: Partial<IKey> = req.body.key;
+
+            const key = await this.keyService.updateKey(id as number, keyData);
             if (!key) {
                 return res.status(404).json({ message: 'Chave não encontrada' });
             }

@@ -88,7 +88,7 @@ router.get('/:id', async (req, res) => {
  *       '400':
  *         description: Erro ao atualizar chave.
  */
-router.put('/updateApiKey', async (req, res) => {
+router.patch('/updateApiKey', async (req, res) => {
     await keyController.updateKey(req, res);
 });
 
